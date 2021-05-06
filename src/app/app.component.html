@@ -1,0 +1,24 @@
+<mat-toolbar class="example-header">Header</mat-toolbar>
+
+<mat-sidenav-container class="example-container">
+  <mat-sidenav #sidenav mode="side" opened class="example-sidenav"
+               [fixedInViewport]="false" [fixedTopGap]="0"
+               [fixedBottomGap]="0">
+    <nav>
+      <ul>
+        <li><a mat-button routerLink="/orderList" routerLinkActive="active">List of orders</a></li>
+        <li><a mat-button routerLink="/about" routerLinkActive="active">About</a></li>
+      </ul>
+    </nav>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>
+
+<mat-toolbar class="example-footer">Footer
+  <p>
+    <button mat-flat-button (click)="sidenav.toggle()">Toggle</button>
+  </p>
+</mat-toolbar>

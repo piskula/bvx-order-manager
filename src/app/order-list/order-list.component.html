@@ -1,0 +1,23 @@
+<h2>Order list</h2>
+
+<mat-card>
+  <ng-container *ngIf="orderListStore.data$ | async as data">
+    <!--  <pre>{{ data | json }}</pre>-->
+    <mat-table [dataSource]="data">
+
+      <ng-container matColumnDef="invoice_id">
+        <mat-header-cell *matHeaderCellDef>Id</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.invoice.id}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="order">
+        <mat-header-cell *matHeaderCellDef>Order Nr</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.invoice.orderNr}} </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+
+    </mat-table>
+  </ng-container>
+</mat-card>

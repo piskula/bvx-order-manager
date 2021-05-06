@@ -1,0 +1,10 @@
+{
+  "/mojafaktura/*": {
+    "target": "https://moja.superfaktura.sk",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/mojafaktura": ""
+    }
+  }
+}
