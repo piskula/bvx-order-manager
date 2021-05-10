@@ -1,0 +1,49 @@
+<h2>Order list</h2>
+
+<mat-card>
+  <ng-container *ngIf="orderListStore.data$ | async as data">
+    <mat-table [dataSource]="data">
+
+      <ng-container matColumnDef="invoice_id">
+        <mat-header-cell *matHeaderCellDef>Id</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          {{element.invoice.id}}
+          <a fxFlexFill [routerLink]="'/orderList/detail/'+ element.invoice.id" class="mat-row-link"></a>
+          <mat-chip-list class="ml-5">
+            <mat-chip *ngIf="element.isSent" color="accent" selected>Sent</mat-chip>
+            <mat-chip *ngIf="!element.isSent" color="primary" selected>To dispatch</mat-chip>
+          </mat-chip-list>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="order">
+        <mat-header-cell *matHeaderCellDef>Order Nr</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.invoice.orderNr}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
+        <mat-cell *matCellDef="let element">{{element.client.name}}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="amount">
+        <mat-header-cell *matHeaderCellDef class="header-align-right">Total</mat-header-cell>
+        <mat-cell *matCellDef="let element" class="header-align-right">{{element.invoice.amount | number: '1.2-2'}} EUR</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="tags">
+        <mat-header-cell *matHeaderCellDef>Tags</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <mat-chip-list>
+<!--            <mat-chip *ngFor="let tag of element.tags" color="primary" selected>{{ tag.name }}</mat-chip>-->
+            <mat-chip *ngIf="element.tags" color="primary" selected>{{ tag.name }}</mat-chip>
+          </mat-chip-list>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+
+    </mat-table>
+  </ng-container>
+</mat-card>

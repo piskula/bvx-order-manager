@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {OrderListStore} from '../service/order-list.store';
+import {OrderListStore} from '../../service/order-list.store';
 
 @Component({
   selector: 'app-order-list',
@@ -9,8 +9,9 @@ import {OrderListStore} from '../service/order-list.store';
 })
 export class OrderListComponent {
 
-  displayedColumns: string[] = ['invoice_id', 'order'];
+  displayedColumns: string[] = ['invoice_id', 'name', 'amount', 'order'];
 
   constructor(public orderListStore: OrderListStore) {
   }
+
 }
