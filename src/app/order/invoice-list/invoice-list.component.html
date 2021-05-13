@@ -1,0 +1,63 @@
+<h2>Invoice list</h2>
+
+<mat-card>
+  <ng-container *ngIf="!isLoading; else loader">
+    <mat-table [dataSource]="list">
+
+      <ng-container matColumnDef="invoice_id">
+        <mat-header-cell *matHeaderCellDef>Id</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          {{element.invoice.id}}
+          <a fxFlexFill [routerLink]="'/invoice/detail/'+ element.invoice.id" class="mat-row-link"></a>
+          <mat-chip-list class="ml-5">
+            <mat-chip *ngIf="element.isSent" color="accent" selected>Sent</mat-chip>
+            <mat-chip *ngIf="!element.isSent" color="primary" selected>To dispatch</mat-chip>
+          </mat-chip-list>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
+        <mat-cell *matCellDef="let element">{{element.client.name}}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="amount">
+        <mat-header-cell *matHeaderCellDef class="table-align-right">Total</mat-header-cell>
+        <mat-cell *matCellDef="let element" class="table-align-right">{{element.invoice.amount | asMoney: element.invoice.currency}}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+        <mat-cell *matCellDef="let element">{{element.invoice.flag}}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="order">
+        <mat-header-cell *matHeaderCellDef class="small-column">Order Nr</mat-header-cell>
+        <mat-cell *matCellDef="let element" class="small-column"> {{element.invoice.orderNr}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="country">
+        <mat-header-cell *matHeaderCellDef class="small-column">Country</mat-header-cell>
+        <mat-cell *matCellDef="let element" class="small-column">
+          <mat-chip-list class="ml-5">
+            <mat-chip
+              [color]="['SK', 'CZ'].includes(element.client.deliveryAddress.country.iso.toUpperCase()) ? 'accent' : 'warn'"
+              selected
+              matTooltipClass="multiline-tooltip"
+              [matTooltip]="element.client.deliveryAddress.name + ',\n'
+               + element.client.deliveryAddress.city + ' (' + element.client.deliveryAddress.zip + '),\n'
+               + element.client.deliveryAddress.country.name">
+              {{element.client.deliveryAddress.country.iso | uppercase}}
+            </mat-chip>
+          </mat-chip-list>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+
+    </mat-table>
+  </ng-container>
+</mat-card>
+
+<ng-template #loader><mat-progress-bar mode="indeterminate"></mat-progress-bar></ng-template>

@@ -7,29 +7,29 @@ import {MatCardModule} from '@angular/material/card';
 import {MatChipsModule} from '@angular/material/chips';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatIconModule} from '@angular/material/icon';
+import {DetailValueComponent} from './detail-value/detail-value.component';
+import {MaterialModule} from './material.module';
+import {MoneyPipe} from './pipe/money.pipe';
 
 const modules = [
-  MatSidenavModule,
-  MatButtonModule,
-  MatToolbarModule,
-  MatTableModule,
-  MatCardModule,
-  MatChipsModule,
-  MatTooltipModule,
-  MatProgressBarModule,
-  MatFormFieldModule,
-  MatIconModule,
+  MaterialModule,
+];
+const declarations = [
+  MoneyPipe,
+  DetailValueComponent,
 ];
 
 @NgModule({
+  declarations: [
+    declarations,
+  ],
   imports: [
-    modules
+    modules,
   ],
   providers: [],
   exports: [
-    modules
+    modules,
+    declarations,
   ]
 })
-export class MaterialModule { }
+export class SharedModule { }

@@ -1,43 +1,40 @@
 <h2>Order list</h2>
 
 <mat-card>
-  <ng-container *ngIf="orderListStore.data$ | async as data">
-    <mat-table [dataSource]="data">
+  <ng-container *ngIf="!isLoading; else loader">
+    <mat-table [dataSource]="list">
 
-      <ng-container matColumnDef="invoice_id">
-        <mat-header-cell *matHeaderCellDef>Id</mat-header-cell>
+      <ng-container matColumnDef="number">
+        <mat-header-cell *matHeaderCellDef>Number</mat-header-cell>
+        <mat-cell *matCellDef="let element">{{element.number}}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="title">
+        <mat-header-cell *matHeaderCellDef>Title</mat-header-cell>
+        <mat-cell *matCellDef="let element">{{element.title}}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="shipping">
+        <mat-header-cell *matHeaderCellDef>Shipping</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          {{element.invoice.id}}
-          <a fxFlexFill [routerLink]="'/orderList/detail/'+ element.invoice.id" class="mat-row-link"></a>
-          <mat-chip-list class="ml-5">
-            <mat-chip *ngIf="element.isSent" color="accent" selected>Sent</mat-chip>
-            <mat-chip *ngIf="!element.isSent" color="primary" selected>To dispatch</mat-chip>
-          </mat-chip-list>
+          <mat-icon *ngIf="element.shipping.id === '4'" [matTooltip]="element.shipping.title" class="color-orange">local_post_office</mat-icon>
+          <mat-icon *ngIf="element.shipping.id === '5'" [matTooltip]="element.shipping.title" class="color-pink">location_on</mat-icon>
+          <mat-icon *ngIf="element.shipping.id === '6'" [matTooltip]="element.shipping.title" class="color-pink">local_shipping</mat-icon>
         </mat-cell>
       </ng-container>
 
-      <ng-container matColumnDef="order">
-        <mat-header-cell *matHeaderCellDef>Order Nr</mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.invoice.orderNr}} </mat-cell>
+      <ng-container matColumnDef="total">
+        <mat-header-cell *matHeaderCellDef class="table-align-right">Total<mat-icon class="ml-5">attach_money</mat-icon></mat-header-cell>
+        <mat-cell *matCellDef="let element" class="table-align-right">
+          {{element.total | asMoney: element.currency}}
+          <mat-icon *ngIf="element.paymentMethod === 'paypal'" class="color-blue ml-5" matTooltip="PayPal">local_parking</mat-icon>
+          <mat-icon *ngIf="element.paymentMethod === 'bacs'" class="ml-5" matTooltip="Prevodom">receipt_long</mat-icon>
+        </mat-cell>
       </ng-container>
 
-      <ng-container matColumnDef="name">
-        <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element.client.name}}</mat-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="amount">
-        <mat-header-cell *matHeaderCellDef class="header-align-right">Total</mat-header-cell>
-        <mat-cell *matCellDef="let element" class="header-align-right">{{element.invoice.amount | number: '1.2-2'}} EUR</mat-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="tags">
-        <mat-header-cell *matHeaderCellDef>Tags</mat-header-cell>
+      <ng-container matColumnDef="payment">
+        <mat-header-cell *matHeaderCellDef>Payment</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <mat-chip-list>
-<!--            <mat-chip *ngFor="let tag of element.tags" color="primary" selected>{{ tag.name }}</mat-chip>-->
-            <mat-chip *ngIf="element.tags" color="primary" selected>{{ tag.name }}</mat-chip>
-          </mat-chip-list>
         </mat-cell>
       </ng-container>
 
@@ -47,3 +44,5 @@
     </mat-table>
   </ng-container>
 </mat-card>
+
+<ng-template #loader><mat-progress-bar mode="indeterminate"></mat-progress-bar></ng-template>

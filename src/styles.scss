@@ -1,4 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
+@import "src/app/common/styles/colors";
+
 
 html {
   scroll-behavior: smooth;
@@ -26,4 +28,19 @@ h2 {
 
 mat-card {
   margin: 1rem;
+}
+
+.mat-tooltip {
+  white-space: pre-line;
+  font-size: .875rem;
+}
+
+.table-align-right {
+  display: flex;
+  padding-right: 2rem;
+  justify-content: flex-end;
+}
+
+.w-50 {
+  width: 50%;
 }

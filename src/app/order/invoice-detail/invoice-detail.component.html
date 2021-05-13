@@ -1,0 +1,73 @@
+<h2>Invoice {{invoiceId}}</h2>
+
+<mat-card>
+  <ng-container *ngIf="!isLoading; else loader">
+
+    <div class="w-50 inline-block">
+      <app-detail-value title="Client name:">
+        {{invoice.client.name}}
+      </app-detail-value>
+
+      <app-detail-value title="Price:">
+        {{invoice.invoice.amount | number: '1.2-2'}} EUR
+      </app-detail-value>
+
+      <app-detail-value title="Type:">
+        <span>{{invoice.invoice.type}}</span>
+      </app-detail-value>
+
+      <app-detail-value title="Sending status:">
+        <mat-chip-list>
+          <mat-chip [color]="invoice.isSent ? 'accent' : 'primary'" selected>{{invoice.isSent ? 'Sent' : 'To dispatch'}}</mat-chip>
+        </mat-chip-list>
+      </app-detail-value>
+    </div>
+
+    <div class="w-50 inline-block">
+      <app-detail-value title="Shipping Address:">
+        <p>{{invoice.client.deliveryAddress.name}}</p>
+        <p>{{invoice.client.deliveryAddress.addressLine}}</p>
+        <p>{{invoice.client.deliveryAddress.city}} ({{invoice.client.deliveryAddress.zip}})</p>
+        <p>{{invoice.client.deliveryAddress.country.name}}</p>
+      </app-detail-value>
+
+      <app-detail-value title="Phone:">
+        {{invoice.client.phone}}
+      </app-detail-value>
+    </div>
+
+    <mat-table [dataSource]="invoice.items">
+
+      <ng-container matColumnDef="quantity">
+        <mat-header-cell *matHeaderCellDef class="table-align-right small-column">Quantity</mat-header-cell>
+        <mat-cell *matCellDef="let element" class="table-align-right small-column">
+          <ng-container *ngIf="element.quantity">
+            {{element.quantity | number: '1.2-2'}}&nbsp;×
+          </ng-container>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="title">
+        <mat-header-cell *matHeaderCellDef>Title</mat-header-cell>
+        <mat-cell *matCellDef="let element" [matTooltip]="element.description" matTooltipPosition="right">{{element.title}}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="unitPrice">
+        <mat-header-cell *matHeaderCellDef class="table-align-right small-column">Price per unit</mat-header-cell>
+        <mat-cell *matCellDef="let element" class="table-align-right small-column">{{element.unitPrice | asMoney: invoice.invoice.currency}}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="totalPrice">
+        <mat-header-cell *matHeaderCellDef class="table-align-right small-column">Total</mat-header-cell>
+        <mat-cell *matCellDef="let element" class="table-align-right small-column">{{element.totalPrice | asMoney: invoice.invoice.currency}}</mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+
+    </mat-table>
+
+  </ng-container>
+</mat-card>
+
+<ng-template #loader><mat-progress-bar mode="indeterminate"></mat-progress-bar></ng-template>
