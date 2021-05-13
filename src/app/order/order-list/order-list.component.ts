@@ -14,7 +14,8 @@ export class OrderListComponent implements OnInit {
   list: OrderModel[] = [];
   isLoading = false;
 
-  displayedColumns: string[] = ['number', 'title', 'shipping', 'total'];
+  displayedColumns: string[] = ['number', 'title', 'date', 'shipping', 'total', 'invoice', 'arrow', 'invoice-proforma'];
+  disabledStatuses = ['cancelled', 'refunded', 'failed', 'trash'];
 
   constructor(private orderService: OrderService) {
   }

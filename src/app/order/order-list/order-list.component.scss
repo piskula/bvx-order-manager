@@ -1,15 +1,25 @@
-.mat-row{
-  position: relative;
-}
-
-.mat-row-link{
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  left: 0;
-  top: 0;
-}
-
-.small-column {
+.btn-column-width {
   max-width: 6rem;
+}
+
+.total-column-width {
+  max-width: 8rem;
+}
+
+.shipping-column-width {
+  max-width: 9rem;
+}
+
+.icon-column-width {
+  max-width: 2rem;
+}
+
+.row-disabled {
+  font-style: italic;
+  color: #607D8B;
+}
+
+.mat-standard-chip { // smaller chips
+  height: 1.5rem !important;
+  min-height: 1.5rem !important;
 }

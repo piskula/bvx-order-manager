@@ -1,13 +1,11 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
-import {InvoiceModel} from '../model/invoice/invoice.model';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {SuperInvoiceModel} from '../model/invoice/super-invoice.model';
-import {TagModel} from '../model/invoice/tag.model';
 import {environment} from '../../environments/environment';
-import {ItemModel} from '../model/invoice/item.model';
 import {OrderModel} from '../model/order/order.model';
+import {InvoiceIdentifierModel} from '../model/order/invoice-identifier.model';
+import * as moment from 'moment';
 
 @Injectable()
 export class OrderService {
@@ -25,6 +23,9 @@ export class OrderService {
   getList(): Observable<OrderModel[]> {
     return this.httpClient.request<any[]>(
       'get',
+      // `${this.URL}/orders?per_page=20&orderby=date&order=desc&status=on-hold`,
+      // `${this.URL}/orders?per_page=20&orderby=date&order=desc&status=processing`,
+      // `${this.URL}/orders?per_page=20&orderby=date&order=desc&status=cancelled`,
       `${this.URL}/orders?per_page=20&orderby=date&order=desc`,
       {headers: this.headers})
       .pipe(
@@ -34,9 +35,12 @@ export class OrderService {
 
   private mapOrder(order: any): OrderModel {
     const shipping = (order?.shipping_lines || [])[0];
+    const metadata: any[] = order?.meta_data || [];
     return {
       number: order?.number,
       title: `${order?.billing?.first_name} ${order?.billing?.last_name}`,
+      status: order?.status,
+      date: moment.utc(order?.date_created_gmt),
       currency: order?.currency,
       total: parseFloat(order?.total),
       shipping: {
@@ -45,7 +49,19 @@ export class OrderService {
         title: shipping?.method_title,
       },
       paymentMethod: order?.payment_method,
+      invoiceRegular: this.getInvoiceFromMetadata(metadata, 'regular'),
+      invoiceProforma: this.getInvoiceFromMetadata(metadata, 'proforma'),
     };
+  }
+
+  private getInvoiceFromMetadata(metadata: any[], type: string): InvoiceIdentifierModel | null {
+    const id = metadata.find(x => x.key === `wc_sf_internal_${type}_id`)?.value;
+    const invoiceNumber = metadata.find(x => x.key === `wc_sf_${type}_invoice_number`)?.value;
+    if (id && invoiceNumber) {
+      return {id, number: invoiceNumber};
+    } else {
+      return null;
+    }
   }
 
 }

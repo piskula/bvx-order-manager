@@ -24,3 +24,14 @@ $color-blue-light: #81D4FA;
 .color-blue {
   color: $color-blue;
 }
+.color-cyan {
+  color: $color-cyan;
+}
+
+
+.color-cancelled {
+  background-color: $color-grey !important;
+}
+.color-on-hold {
+  background-color: $color-blue !important;
+}

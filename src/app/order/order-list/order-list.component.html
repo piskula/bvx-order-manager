@@ -2,39 +2,100 @@
 
 <mat-card>
   <ng-container *ngIf="!isLoading; else loader">
-    <mat-table [dataSource]="list">
+    <mat-table [dataSource]="list" *ngIf="list?.length; else empty">
 
       <ng-container matColumnDef="number">
         <mat-header-cell *matHeaderCellDef>Number</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element.number}}</mat-cell>
+        <mat-cell *matCellDef="let element">
+          <span [ngClass]="{'row-disabled': disabledStatuses.includes(element.status)}">{{element.number}}</span>
+          <mat-chip-list class="ml-5">
+            <mat-chip selected class="color-{{element.status}}">{{element.status | titlecase}}</mat-chip>
+          </mat-chip-list>
+        </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="title">
         <mat-header-cell *matHeaderCellDef>Title</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element.title}}</mat-cell>
+        <mat-cell *matCellDef="let element" [class.row-disabled]="disabledStatuses.includes(element.status)">{{element.title}}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="date">
+        <mat-header-cell *matHeaderCellDef>Date</mat-header-cell>
+        <mat-cell *matCellDef="let element" [class.row-disabled]="disabledStatuses.includes(element.status)"
+                  [matTooltip]="element.date.local().format('DD.MM.yyyy HH:mm')">{{element.date.fromNow()}}</mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="shipping">
-        <mat-header-cell *matHeaderCellDef>Shipping</mat-header-cell>
-        <mat-cell *matCellDef="let element">
-          <mat-icon *ngIf="element.shipping.id === '4'" [matTooltip]="element.shipping.title" class="color-orange">local_post_office</mat-icon>
-          <mat-icon *ngIf="element.shipping.id === '5'" [matTooltip]="element.shipping.title" class="color-pink">location_on</mat-icon>
-          <mat-icon *ngIf="element.shipping.id === '6'" [matTooltip]="element.shipping.title" class="color-pink">local_shipping</mat-icon>
+        <mat-header-cell *matHeaderCellDef class="shipping-column-width">Shipping</mat-header-cell>
+        <mat-cell *matCellDef="let element" [ngSwitch]="element.shipping.id" class="shipping-column-width">
+          <mat-icon *ngSwitchCase="'4'" [matTooltip]="element.shipping.title"
+                    class="{{disabledStatuses.includes(element.status) ? 'row-disabled' : 'color-orange'}}">local_post_office</mat-icon>
+          <span *ngSwitchCase="'4'"
+                class="ml-5 {{disabledStatuses.includes(element.status) ? 'row-disabled' : 'color-orange'}}">Pošta</span>
+
+          <mat-icon *ngSwitchCase="'2'" [matTooltip]="element.shipping.title"
+                    class="{{disabledStatuses.includes(element.status) ? 'row-disabled' : 'color-cyan'}}">location_on</mat-icon>
+          <span *ngSwitchCase="'2'"
+                class="ml-5 {{disabledStatuses.includes(element.status) ? 'row-disabled' : 'color-cyan'}}">Pick-up Point</span>
+          <mat-icon *ngSwitchCase="'5'" [matTooltip]="element.shipping.title"
+                    class="{{disabledStatuses.includes(element.status) ? 'row-disabled' : 'color-cyan'}}">location_on</mat-icon>
+          <span *ngSwitchCase="'5'"
+                class="ml-5 {{disabledStatuses.includes(element.status) ? 'row-disabled' : 'color-cyan'}}">Pick-up Point</span>
+
+          <mat-icon *ngSwitchCase="'6'" [matTooltip]="element.shipping.title"
+                    class="{{disabledStatuses.includes(element.status) ? 'row-disabled' : 'color-cyan'}}">local_shipping</mat-icon>
+          <span *ngSwitchCase="'6'"
+                class="ml-5 {{disabledStatuses.includes(element.status) ? 'row-disabled' : 'color-cyan'}}">Kuriér</span>
+          <mat-icon *ngSwitchCase="'9'" [matTooltip]="element.shipping.title"
+                    class="{{disabledStatuses.includes(element.status) ? 'row-disabled' : 'color-cyan'}}">local_shipping</mat-icon>
+          <span *ngSwitchCase="'9'"
+                class="ml-5 {{disabledStatuses.includes(element.status) ? 'row-disabled' : 'color-cyan'}}">Kuriér</span>
+
+          <mat-icon *ngSwitchDefault [matTooltip]="element.shipping.title">error</mat-icon>
         </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="total">
-        <mat-header-cell *matHeaderCellDef class="table-align-right">Total<mat-icon class="ml-5">attach_money</mat-icon></mat-header-cell>
-        <mat-cell *matCellDef="let element" class="table-align-right">
+        <mat-header-cell *matHeaderCellDef class="table-align-right total-column-width">Total<mat-icon class="ml-5">attach_money</mat-icon></mat-header-cell>
+        <mat-cell *matCellDef="let element" class="table-align-right total-column-width" [ngClass]="{'row-disabled': disabledStatuses.includes(element.status)}">
           {{element.total | asMoney: element.currency}}
-          <mat-icon *ngIf="element.paymentMethod === 'paypal'" class="color-blue ml-5" matTooltip="PayPal">local_parking</mat-icon>
-          <mat-icon *ngIf="element.paymentMethod === 'bacs'" class="ml-5" matTooltip="Prevodom">receipt_long</mat-icon>
+          <mat-icon *ngIf="element.paymentMethod === 'paypal'" matTooltip="PayPal"
+                    class="ml-5 {{disabledStatuses.includes(element.status) ? 'row-disabled' : 'color-blue'}}">local_parking</mat-icon>
+          <mat-icon *ngIf="element.paymentMethod === 'bacs'" matTooltip="Prevodom"
+                    class="ml-5" [ngClass]="{'row-disabled': disabledStatuses.includes(element.status)}">receipt_long</mat-icon>
         </mat-cell>
       </ng-container>
 
-      <ng-container matColumnDef="payment">
-        <mat-header-cell *matHeaderCellDef>Payment</mat-header-cell>
-        <mat-cell *matCellDef="let element">
+      <ng-container matColumnDef="invoice">
+        <mat-header-cell *matHeaderCellDef class="btn-column-width">Invoice</mat-header-cell>
+        <mat-cell *matCellDef="let element" class="btn-column-width">
+          <a *ngIf="element.invoiceRegular"
+             mat-raised-button color="accent"
+             [matTooltip]="element.invoiceRegular.number"
+             [routerLink]="['/invoice','detail', element.invoiceRegular.id]"
+             routerLinkActive="active">
+            Faktúra
+          </a>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="arrow">
+        <mat-header-cell *matHeaderCellDef class="icon-column-width"></mat-header-cell>
+        <mat-cell *matCellDef="let element" class="icon-column-width">
+          <mat-icon *ngIf="element.invoiceProforma && element.invoiceRegular">west</mat-icon>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="invoice-proforma">
+        <mat-header-cell *matHeaderCellDef class="btn-column-width">Proforma</mat-header-cell>
+        <mat-cell *matCellDef="let element" class="btn-column-width">
+          <a *ngIf="element.invoiceProforma"
+             mat-stroked-button color="accent"
+             [matTooltip]="element.invoiceProforma.number"
+             [routerLink]="['/invoice','detail', element.invoiceProforma.id]"
+             routerLinkActive="active">
+            Proforma
+          </a>
         </mat-cell>
       </ng-container>
 
@@ -46,3 +107,4 @@
 </mat-card>
 
 <ng-template #loader><mat-progress-bar mode="indeterminate"></mat-progress-bar></ng-template>
+<ng-template #empty>No data</ng-template>
