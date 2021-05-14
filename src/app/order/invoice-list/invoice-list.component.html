@@ -4,14 +4,22 @@
   <ng-container *ngIf="!isLoading; else loader">
     <mat-table [dataSource]="list">
 
-      <ng-container matColumnDef="invoice_id">
-        <mat-header-cell *matHeaderCellDef>Id</mat-header-cell>
+      <ng-container matColumnDef="invoice_nr">
+        <mat-header-cell *matHeaderCellDef>Nr</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          {{element.invoice.id}}
-          <a fxFlexFill [routerLink]="'/invoice/detail/'+ element.invoice.id" class="mat-row-link"></a>
-          <mat-chip-list class="ml-5">
-            <mat-chip *ngIf="element.isSent" color="accent" selected>Sent</mat-chip>
-            <mat-chip *ngIf="!element.isSent" color="primary" selected>To dispatch</mat-chip>
+          <a [routerLink]="'/invoice/detail/' + element.invoice.id" mat-flat-button [ngSwitch]="element.invoice.type" [matTooltip]="element.invoice.number">
+            <span *ngSwitchCase="'regular'">{{element.invoice.number?.substr(0,4)}}</span>
+            <span *ngSwitchCase="'regular'" class="invoice-nr-important">{{element.invoice.number?.substr(4,3)}}</span>
+            <span *ngSwitchDefault>{{element.invoice.number}}</span>
+          </a>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <mat-chip-list>
+            <mat-chip class="color-{{element.invoice.flag}}" selected>{{element.invoice.flag}}</mat-chip>
           </mat-chip-list>
         </mat-cell>
       </ng-container>
@@ -22,13 +30,20 @@
       </ng-container>
 
       <ng-container matColumnDef="amount">
-        <mat-header-cell *matHeaderCellDef class="table-align-right">Total</mat-header-cell>
-        <mat-cell *matCellDef="let element" class="table-align-right">{{element.invoice.amount | asMoney: element.invoice.currency}}</mat-cell>
+        <mat-header-cell *matHeaderCellDef class="table-align-right">Total<mat-icon class="ml-5">check</mat-icon></mat-header-cell>
+        <mat-cell *matCellDef="let element" class="table-align-right">
+          {{element.invoice.amount | asMoney: element.invoice.currency}}
+          <mat-icon class="ml-5 color-status-{{element.invoice.status.status}}" [matTooltip]="element.invoice.status.statusTitle">{{element.invoice.status.statusIcon}}</mat-icon>
+        </mat-cell>
       </ng-container>
 
-      <ng-container matColumnDef="status">
-        <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element.invoice.flag}}</mat-cell>
+      <ng-container matColumnDef="paymentType">
+        <mat-header-cell *matHeaderCellDef class="icon-column-width"></mat-header-cell>
+        <mat-cell *matCellDef="let element" class="icon-column-width">
+          <mat-icon *ngIf="element.invoice.paymentType === 'paypal'" matTooltip="PayPal"
+                    class="color-blue">local_parking</mat-icon>
+          <mat-icon *ngIf="element.invoice.paymentType === 'transfer'" matTooltip="Prevodom">receipt_long</mat-icon>
+        </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="order">
@@ -50,6 +65,26 @@
               {{element.client.deliveryAddress.country.iso | uppercase}}
             </mat-chip>
           </mat-chip-list>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="link">
+        <mat-header-cell *matHeaderCellDef class="btn-column-width">Links</mat-header-cell>
+        <mat-cell *matCellDef="let element" class="btn-column-width">
+          <a *ngIf="element.invoice.proformaId"
+             mat-stroked-button color="accent"
+             [matTooltip]="element.invoice.proformaTitle"
+             [routerLink]="['/invoice','detail', element.invoice.proformaId]"
+             routerLinkActive="active">
+            Proforma
+          </a>
+          <a *ngIf="element.invoice.parentRegularId"
+             mat-raised-button color="accent"
+             [matTooltip]="element.invoice.parentRegularTitle"
+             [routerLink]="['/invoice','detail', element.invoice.parentRegularId]"
+             routerLinkActive="active">
+            Regular
+          </a>
         </mat-cell>
       </ng-container>
 

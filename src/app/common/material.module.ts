@@ -10,6 +10,7 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatIconModule} from '@angular/material/icon';
 import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatTreeModule} from '@angular/material/tree';
 
 const modules = [
   MatSidenavModule,
@@ -23,6 +24,7 @@ const modules = [
   MatFormFieldModule,
   MatIconModule,
   MatCheckboxModule,
+  MatTreeModule,
 ];
 
 @NgModule({

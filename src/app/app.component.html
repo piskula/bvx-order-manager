@@ -6,13 +6,7 @@
   <mat-sidenav #sidenav mode="side" opened class="example-sidenav"
                [fixedInViewport]="false" [fixedTopGap]="0"
                [fixedBottomGap]="0">
-    <nav>
-      <ul>
-        <li><a mat-button routerLink="/invoice" routerLinkActive="active">List of invoices</a></li>
-        <li><a mat-button routerLink="/order" routerLinkActive="active">List of orders</a></li>
-        <li><a mat-button routerLink="/about" routerLinkActive="active">About</a></li>
-      </ul>
-    </nav>
+    <app-side-nav></app-side-nav>
   </mat-sidenav>
 
   <mat-sidenav-content>

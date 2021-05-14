@@ -15,12 +15,28 @@ const routes: Routes = [
         redirectTo: 'list',
       },
       {
-        path: 'list',
-        component: InvoiceListComponent,
-      },
-      {
         path: 'detail/:invoiceId',
         component: InvoiceDetailComponent,
+      },
+      {
+        path: 'list',
+        children: [
+          {
+            path: '',
+            pathMatch: 'full',
+            redirectTo: 'regular',
+          },
+          {
+            path: 'regular',
+            component: InvoiceListComponent,
+            data: {filterString: '/type:regular'},
+          },
+          {
+            path: 'proforma',
+            component: InvoiceListComponent,
+            data: {filterString: '/type:proforma'},
+          },
+        ]
       },
     ],
   },
@@ -34,7 +50,32 @@ const routes: Routes = [
       },
       {
         path: 'list',
-        component: OrderListComponent,
+        children: [
+          {
+            path: '',
+            pathMatch: 'full',
+            redirectTo: 'all',
+          },
+          {
+            path: 'all',
+            component: OrderListComponent,
+          },
+          {
+            path: 'processing',
+            component: OrderListComponent,
+            data: {filterString: 'status=processing'},
+          },
+          {
+            path: 'on-hold',
+            component: OrderListComponent,
+            data: {filterString: 'status=on-hold'},
+          },
+          {
+            path: 'cancelled',
+            component: OrderListComponent,
+            data: {filterString: 'status=cancelled'},
+          },
+        ]
       },
     ],
   },

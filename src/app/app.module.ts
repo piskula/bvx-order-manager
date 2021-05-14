@@ -10,6 +10,7 @@ import {HttpClientModule} from '@angular/common/http';
 import { InvoiceDetailComponent } from './order/invoice-detail/invoice-detail.component';
 import {SharedModule} from './common/shared.module';
 import {OrderListComponent} from './order/order-list/order-list.component';
+import {SideNavComponent} from './order/side-nav/side-nav.component';
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import {OrderListComponent} from './order/order-list/order-list.component';
     OrderListComponent,
     InvoiceListComponent,
     InvoiceDetailComponent,
+    SideNavComponent,
   ],
   imports: [
     BrowserModule,

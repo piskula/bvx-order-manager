@@ -3,6 +3,7 @@ import {finalize, take, tap} from 'rxjs/operators';
 import {OrderService} from '../../service/order.service';
 import {OrderModel} from '../../model/order/order.model';
 import {SelectionModel} from '@angular/cdk/collections';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-order-list',
@@ -12,6 +13,7 @@ import {SelectionModel} from '@angular/cdk/collections';
 })
 export class OrderListComponent implements OnInit {
 
+  filterString = this.activatedRoute?.snapshot?.data?.filterString || '';
   list: OrderModel[] = [];
   isLoading = false;
 
@@ -19,7 +21,10 @@ export class OrderListComponent implements OnInit {
   selection = new SelectionModel<OrderModel>(true, []);
   disabledStatuses = ['cancelled', 'refunded', 'failed', 'trash'];
 
-  constructor(private orderService: OrderService) {
+  constructor(
+    private orderService: OrderService,
+    private activatedRoute: ActivatedRoute,
+  ) {
   }
 
   ngOnInit(): void {
@@ -43,7 +48,7 @@ export class OrderListComponent implements OnInit {
 
   private resetList(): void {
     this.isLoading = true;
-    this.orderService.getList()
+    this.orderService.getList(this.filterString)
       .pipe(
         take(1),
         tap(list => this.list = list),

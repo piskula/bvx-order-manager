@@ -15,10 +15,12 @@ $color-pink-light: #FFC1E3;
 $color-blue: #1E88E5;
 $color-blue-light: #81D4FA;
 
-.color-orange {
+.color-orange,
+.color-status-2 {
   color: $color-orange;
 }
-.color-pink {
+.color-pink,
+.color-status-1 {
   color: $color-pink;
 }
 .color-blue {
@@ -27,11 +29,24 @@ $color-blue-light: #81D4FA;
 .color-cyan {
   color: $color-cyan;
 }
+.color-status-3 {
+  color: $color-green;
+}
 
 
 .color-cancelled {
   background-color: $color-grey !important;
 }
+.color-overpaid,
 .color-on-hold {
   background-color: $color-blue !important;
 }
+.color-fully-paid {
+  background-color: $color-green !important;
+}
+.color-processing {
+  background-color: $color-orange !important;
+}
+//.color-overpaid {
+//  background-color: $color-orange !important;
+//}

@@ -3,7 +3,7 @@
 <mat-card>
   <ng-container *ngIf="!isLoading; else loader">
     <div *ngIf="selection.selected.length">
-      What to do with {{selection.selected.length}} selected items (from {{list.length}})?
+      What do you want to do with <span class="color-pink" style="font-size: 1rem">{{selection.selected.length}}</span> selected items (from {{list.length}})?
     </div>
     <mat-table [dataSource]="list" *ngIf="list?.length; else empty">
 

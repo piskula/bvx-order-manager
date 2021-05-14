@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {InvoiceService} from '../../service/invoice.service';
 import {finalize, take, tap} from 'rxjs/operators';
 import {SuperInvoiceModel} from '../../model/invoice/super-invoice.model';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-order-list',
@@ -11,12 +12,16 @@ import {SuperInvoiceModel} from '../../model/invoice/super-invoice.model';
 })
 export class InvoiceListComponent implements OnInit {
 
+  filterString = this.activatedRoute?.snapshot?.data?.filterString || '';
   list: SuperInvoiceModel[] = [];
   isLoading = false;
 
-  displayedColumns: string[] = ['invoice_id', 'name', 'amount', 'status', 'order', 'country'];
+  displayedColumns: string[] = ['invoice_nr', 'status', 'name', 'amount', 'paymentType', 'order', 'country', 'link'];
 
-  constructor(private invoiceService: InvoiceService) {
+  constructor(
+    private invoiceService: InvoiceService,
+    private activatedRoute: ActivatedRoute,
+  ) {
   }
 
   ngOnInit(): void {
@@ -25,7 +30,7 @@ export class InvoiceListComponent implements OnInit {
 
   private resetList(): void {
     this.isLoading = true;
-    this.invoiceService.getList()
+    this.invoiceService.getList(this.filterString)
       .pipe(
         take(1),
         tap(list => this.list = list),
