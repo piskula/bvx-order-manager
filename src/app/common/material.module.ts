@@ -9,6 +9,7 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatIconModule} from '@angular/material/icon';
+import {MatCheckboxModule} from '@angular/material/checkbox';
 
 const modules = [
   MatSidenavModule,
@@ -21,6 +22,7 @@ const modules = [
   MatProgressBarModule,
   MatFormFieldModule,
   MatIconModule,
+  MatCheckboxModule,
 ];
 
 @NgModule({

@@ -1,7 +1,9 @@
+$footer-height: 2rem;
+
 .example-container {
   position: absolute;
   top: 4rem;
-  bottom: 4rem;
+  bottom: $footer-height;
   left: 0;
   right: 0;
 }
@@ -29,4 +31,17 @@
   bottom: 0;
   left: 0;
   right: 0;
+
+  &.mat-toolbar-multiple-rows {
+    min-height: $footer-height;
+  }
+  .mat-toolbar-row {
+    height: $footer-height;
+    span {
+      margin: auto;
+      font-weight: 200;
+      font-size: .875rem;
+      color: #aaa;
+    }
+  }
 }

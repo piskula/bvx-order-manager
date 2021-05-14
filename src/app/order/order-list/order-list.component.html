@@ -2,7 +2,25 @@
 
 <mat-card>
   <ng-container *ngIf="!isLoading; else loader">
+    <div *ngIf="selection.selected.length">
+      What to do with {{selection.selected.length}} selected items (from {{list.length}})?
+    </div>
     <mat-table [dataSource]="list" *ngIf="list?.length; else empty">
+
+      <ng-container matColumnDef="select">
+        <mat-header-cell *matHeaderCellDef class="icon-column-width">
+          <mat-checkbox (change)="$event ? masterToggle() : null"
+                        [checked]="selection.hasValue() && isAllSelected()"
+                        [indeterminate]="selection.hasValue() && !isAllSelected()">
+          </mat-checkbox>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row" class="icon-column-width">
+          <mat-checkbox (click)="$event.stopPropagation()"
+                        (change)="$event ? selection.toggle(row) : null"
+                        [checked]="selection.isSelected(row)">
+          </mat-checkbox>
+        </mat-cell>
+      </ng-container>
 
       <ng-container matColumnDef="number">
         <mat-header-cell *matHeaderCellDef>Number</mat-header-cell>
