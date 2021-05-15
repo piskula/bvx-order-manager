@@ -1,0 +1,52 @@
+<h2>Send ({{ orders.length }}) orders</h2>
+
+<mat-card>
+
+  <mat-horizontal-stepper linear #stepper>
+
+    <mat-step [completed]="successSkPosta && successPacketa">
+      <ng-template matStepLabel>Register package labels</ng-template>
+
+      <h3 class="d-flex vertical-align-items color-orange">
+        <mat-icon [matBadge]="ordersSlovakPost.length">local_post_office</mat-icon><span class="ml-5">Slovak post</span>
+      </h3>
+      <p>
+        <button mat-raised-button color="accent" [disabled]="loadingSkPosta || successSkPosta || errorSkPosta" (click)="registerSkPostParcels()">
+          Register {{ordersSlovakPost.length}} parcels for Slovak Post<mat-spinner diameter="25" class="d-inline-block ml-5" *ngIf="loadingSkPosta"></mat-spinner>
+        </button>
+        <span class="d-inline-block ml-5 color-green" *ngIf="successSkPosta && ordersSlovakPost.length > 0">
+          <span class="d-flex vertical-align-items">Successfully done<mat-icon>check</mat-icon></span></span>
+        <span class="d-inline-block ml-5 color-pink" *ngIf="errorSkPosta && ordersSlovakPost.length > 0">
+          <span class="d-flex vertical-align-items">Error<mat-icon>error</mat-icon></span></span>
+      </p>
+      <p *ngIf="skPostSheetId" class="color-green">Slovak Post SheetId: <span style="font-family: monospace; font-weight: 600">{{skPostSheetId}}</span></p>
+
+      <h3 class="d-flex vertical-align-items color-cyan">
+        <mat-icon [matBadge]="ordersPickUpPoints.length">location_on</mat-icon>
+        <mat-icon>add</mat-icon>
+        <mat-icon [matBadge]="ordersCourier.length">local_shipping</mat-icon>
+        <span class="ml-5">Zásielkovňa (Pick up point + kuriér)</span>
+      </h3>
+      <p>
+        <button mat-raised-button color="accent" [disabled]="loadingPacketa || successPacketa || errorPacketa">
+          Register {{ordersCourier.length + ordersPickUpPoints.length}} parcels for Zásielkovňa<mat-spinner diameter="25" class="d-inline-block ml-5" *ngIf="loadingPacketa"></mat-spinner>
+        </button>
+        <span class="d-inline-block ml-5 color-green" *ngIf="successPacketa && (ordersCourier.length > 0 || ordersPickUpPoints.length > 0)">
+          <span class="d-flex vertical-align-items">Successfully done<mat-icon>check</mat-icon></span></span>
+        <span class="d-inline-block ml-5 color-pink" *ngIf="errorPacketa && (ordersCourier.length > 0 || ordersPickUpPoints.length > 0)">
+          <span class="d-flex vertical-align-items">Error<mat-icon>error</mat-icon></span></span>
+      </p>
+
+      <div class="text-right">
+        <button mat-raised-button matStepperNext color="primary" [disabled]="!successSkPosta || !successPacketa">Next<mat-icon class="ml-5">east</mat-icon></button>
+      </div>
+    </mat-step>
+
+    <mat-step>
+      <ng-template matStepLabel>Change order status</ng-template>
+      Step 2
+    </mat-step>
+
+  </mat-horizontal-stepper>
+
+</mat-card>

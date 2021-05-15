@@ -6,5 +6,21 @@
     "pathRewrite": {
       "^/mojafaktura": ""
     }
+  },
+  "/bvx-eshop/*": {
+    "target": "https://biovoxel.tech/wp-json/wc/v3",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/bvx-eshop": ""
+    }
+  },
+  "/sk-post-api/*": {
+    "target": "https://mojezasielky.posta.sk/integration/webServices/api",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/sk-post-api": ""
+    }
   }
 }

@@ -11,6 +11,8 @@ import { InvoiceDetailComponent } from './order/invoice-detail/invoice-detail.co
 import {SharedModule} from './common/shared.module';
 import {OrderListComponent} from './order/order-list/order-list.component';
 import {SideNavComponent} from './order/side-nav/side-nav.component';
+import {SendOrdersComponent} from './order/send-orders/send-orders.component';
+import {SendOrdersStore} from './service/helper/send-orders.store';
 
 @NgModule({
   declarations: [
@@ -20,6 +22,7 @@ import {SideNavComponent} from './order/side-nav/side-nav.component';
     InvoiceListComponent,
     InvoiceDetailComponent,
     SideNavComponent,
+    SendOrdersComponent,
   ],
   imports: [
     BrowserModule,
@@ -28,7 +31,9 @@ import {SideNavComponent} from './order/side-nav/side-nav.component';
     BrowserAnimationsModule,
     SharedModule,
   ],
-  providers: [],
+  providers: [
+    SendOrdersStore,
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

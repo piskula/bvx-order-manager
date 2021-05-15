@@ -23,9 +23,6 @@ export class OrderService {
   getList(customFilterString: string = ''): Observable<OrderModel[]> {
     return this.httpClient.request<any[]>(
       'get',
-      // `${this.URL}/orders?per_page=20&orderby=date&order=desc&status=on-hold`,
-      // `${this.URL}/orders?per_page=20&orderby=date&order=desc&status=processing`,
-      // `${this.URL}/orders?per_page=20&orderby=date&order=desc&status=cancelled`,
       `${this.URL}/orders?per_page=20&orderby=date&order=desc&${customFilterString}`,
       {headers: this.headers})
       .pipe(

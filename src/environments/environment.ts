@@ -9,9 +9,14 @@ export const environment = {
     authHeader: '',
   },
   wooCommerce: {
-    url: '',
+    url: 'http://localhost:4200/bvx-eshop',
     apiKey: '',
     secret: '',
+  },
+  skPost: {
+    url: 'http://localhost:4200/sk-post-api',
+    userId: '',
+    apiKey: '',
   },
 };
 

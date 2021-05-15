@@ -3,7 +3,14 @@
 <mat-card>
   <ng-container *ngIf="!isLoading; else loader">
     <div *ngIf="selection.selected.length">
-      What do you want to do with <span class="color-pink" style="font-size: 1rem">{{selection.selected.length}}</span> selected items (from {{list.length}})?
+      <p>
+        <mat-icon class="color-orange mr-6" [matBadge]="selectedPost">local_post_office</mat-icon>
+        <mat-icon class="color-cyan mr-6" [matBadge]="selectedPacketa">location_on</mat-icon>
+        <mat-icon class="color-cyan mr-6" [matBadge]="selectedCourier">local_shipping</mat-icon>
+        <button mat-raised-button color="primary" (click)="send()">
+          Ship <span style="font-weight: 600">{{selection.selected.length}}</span> order<ng-container *ngIf="selection.selected.length > 1">s</ng-container>
+        </button>
+      </p>
     </div>
     <mat-table [dataSource]="list" *ngIf="list?.length; else empty">
 

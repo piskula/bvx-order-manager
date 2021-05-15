@@ -4,6 +4,7 @@ import {AboutComponent} from './about/about.component';
 import {InvoiceListComponent} from './order/invoice-list/invoice-list.component';
 import {InvoiceDetailComponent} from './order/invoice-detail/invoice-detail.component';
 import {OrderListComponent} from './order/order-list/order-list.component';
+import {SendOrdersComponent} from './order/send-orders/send-orders.component';
 
 const routes: Routes = [
   {
@@ -47,6 +48,10 @@ const routes: Routes = [
         path: '',
         pathMatch: 'full',
         redirectTo: 'list',
+      },
+      {
+        path: 'send',
+        component: SendOrdersComponent,
       },
       {
         path: 'list',

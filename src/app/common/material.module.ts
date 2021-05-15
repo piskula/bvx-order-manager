@@ -11,6 +11,9 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatIconModule} from '@angular/material/icon';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatTreeModule} from '@angular/material/tree';
+import {MatBadgeModule} from '@angular/material/badge';
+import {MatStepperModule} from '@angular/material/stepper';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 const modules = [
   MatSidenavModule,
@@ -25,6 +28,9 @@ const modules = [
   MatIconModule,
   MatCheckboxModule,
   MatTreeModule,
+  MatBadgeModule,
+  MatStepperModule,
+  MatProgressSpinnerModule,
 ];
 
 @NgModule({
