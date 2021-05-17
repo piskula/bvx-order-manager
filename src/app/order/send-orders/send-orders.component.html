@@ -19,7 +19,9 @@
         <span class="d-inline-block ml-5 color-pink" *ngIf="errorSkPosta && ordersSlovakPost.length > 0">
           <span class="d-flex vertical-align-items">Error<mat-icon>error</mat-icon></span></span>
       </p>
-      <p *ngIf="skPostSheetId" class="color-green">Slovak Post SheetId: <span style="font-family: monospace; font-weight: 600">{{skPostSheetId}}</span></p>
+      <p *ngIf="skPostSheetId" class="color-green">Slovak Post SheetId: <span style="font-family: monospace; font-weight: 600">
+        <a [href]="'https://mojezasielky.posta.sk/#sheets/' + skPostSheetId" target="_blank" style="color: inherit">{{skPostSheetId}}</a>
+      </span></p>
 
       <h3 class="d-flex vertical-align-items color-cyan">
         <mat-icon [matBadge]="ordersPickUpPoints.length">location_on</mat-icon>
@@ -42,9 +44,45 @@
       </div>
     </mat-step>
 
+
+
     <mat-step>
-      <ng-template matStepLabel>Change order status</ng-template>
-      Step 2
+      <ng-template matStepLabel>Update order status to complete</ng-template>
+
+      <h3>
+        Click to finally process all <span class="color-pink orders-amount-number">{{orders.length}}</span> orders and update their status to
+        <mat-chip-list class="d-inline-block"><mat-chip selected>Completed</mat-chip></mat-chip-list>:
+      </h3>
+
+      <button mat-raised-button color="accent" class="mb-5"
+              (click)="updateStatusesInWpToCompleted()"
+              [disabled]="statusesUpdateOngoing || statusesUpdateErrors?.length > 0 || statusesUpdateNumberOfDone == orders.length">
+        Process orders<mat-spinner diameter="25" class="d-inline-block ml-5" *ngIf="statusesUpdateOngoing"></mat-spinner>
+      </button>
+
+      <p *ngIf="statusesUpdateOngoing">
+        Processing {{ statusesUpdateNumberOfDone }} of {{ orders.length }}&hellip;
+      </p>
+
+      <p *ngIf="statusesUpdateNumberOfDone !== 0">
+        <span class="color-green">
+          <mat-icon class="mr-5">check</mat-icon>
+          {{statusesUpdateNumberOfDone}} orders updated successfully! You can take them to post office.
+        </span>
+      </p>
+      <p *ngIf="statusesUpdateErrors.length > 0">
+        <span class="color-pink">
+          <mat-icon class="mr-5">error</mat-icon>
+          Accidentally, there were {{statusesUpdateErrors.length}} errors. Recheck those manually!
+        </span>
+      </p>
+
+      <div class="text-right">
+        <a mat-raised-button matStepperNext
+           [routerLink]="['/order','list', 'processing']" color="primary"
+           [disabled]="statusesUpdateNumberOfDone !== orders.length">Finish<mat-icon class="ml-5">check</mat-icon></a>
+      </div>
+
     </mat-step>
 
   </mat-horizontal-stepper>

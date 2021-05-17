@@ -1,3 +1,17 @@
 .mat-step-header {
   pointer-events: none !important;
 }
+
+.mat-standard-chip { // smaller chips
+  height: 1.5rem !important;
+  min-height: 1.5rem !important;
+}
+
+.orders-amount-number {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+mat-icon {
+  vertical-align: middle;
+}

@@ -3,13 +3,14 @@ import {OrderModel} from '../../model/order/order.model';
 import {SendOrdersStore} from '../../service/helper/send-orders.store';
 import {SkPostService} from '../../service/sk-post.service';
 import {catchError, finalize, take, tap} from 'rxjs/operators';
-import {throwError} from 'rxjs';
+import {forkJoin, of, throwError} from 'rxjs';
+import {OrderService} from '../../service/order.service';
 
 @Component({
   selector: 'app-send-orders',
   templateUrl: './send-orders.component.html',
   styleUrls: ['./send-orders.component.scss'],
-  providers: [SkPostService],
+  providers: [SkPostService, OrderService],
 })
 export class SendOrdersComponent {
 
@@ -28,9 +29,14 @@ export class SendOrdersComponent {
   errorPacketa = false;
   loadingPacketa = false;
 
+  statusesUpdateNumberOfDone = 0;
+  statusesUpdateErrors: OrderModel[] = [];
+  statusesUpdateOngoing = false;
+
   constructor(
     private sendOrdersStore: SendOrdersStore,
     private skPostService: SkPostService,
+    private orderService: OrderService,
   ) {
     this.orders = this.sendOrdersStore.orders;
 
@@ -61,6 +67,25 @@ export class SendOrdersComponent {
         }),
         finalize(() => this.loadingSkPosta = false),
       ).subscribe();
+  }
+
+  updateStatusesInWpToCompleted(): void {
+    this.statusesUpdateOngoing = true;
+    forkJoin(
+      this.orders.map(order =>
+        this.orderService.changeStatus(order.id, 'completed')
+          .pipe(
+            tap(() => this.statusesUpdateNumberOfDone++),
+            catchError((err) => {
+              this.statusesUpdateErrors.push(order);
+              console.error(err);
+              return of(undefined);
+            }),
+          )
+      )
+    ).pipe(
+      finalize(() => this.statusesUpdateOngoing = false),
+    ).subscribe();
   }
 
 }

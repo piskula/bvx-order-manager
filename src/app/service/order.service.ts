@@ -3,7 +3,7 @@ import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {environment} from '../../environments/environment';
-import {OrderModel} from '../model/order/order.model';
+import {OrderModel, Status} from '../model/order/order.model';
 import {InvoiceIdentifierModel} from '../model/order/invoice-identifier.model';
 import * as moment from 'moment';
 
@@ -30,10 +30,21 @@ export class OrderService {
       );
   }
 
+  changeStatus(orderId: number, status: Status): Observable<OrderModel> {
+    return this.httpClient.post(
+      `${this.URL}/orders/${orderId}`,
+      {status},
+      {headers: this.headers})
+      .pipe(
+        map(order => this.mapOrder(order)),
+      );
+  }
+
   private mapOrder(order: any): OrderModel {
     const shipping = (order?.shipping_lines || [])[0];
     const metadata: any[] = order?.meta_data || [];
     return {
+      id: order?.id,
       number: order?.number,
       title: `${order?.billing?.first_name} ${order?.billing?.last_name}`,
       status: order?.status,
@@ -44,6 +55,17 @@ export class OrderService {
         id: shipping?.instance_id,
         type: shipping?.method_id,
         title: shipping?.method_title,
+        address: {
+          name: order?.shipping?.first_name + ' ' + order?.shipping?.last_name,
+          company: order?.shipping?.company,
+          addressLine1: order?.shipping?.address_1,
+          addressLine2: order?.shipping?.address_2,
+          city: order?.shipping?.city,
+          zip: order?.shipping?.postcode,
+          country: order?.shipping?.country,
+          email: order?.billing?.email,
+          phone: order?.billing?.phone,
+        },
       },
       paymentMethod: order?.payment_method,
       invoiceRegular: this.getInvoiceFromMetadata(metadata, 'regular'),
