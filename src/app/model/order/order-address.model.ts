@@ -1,5 +1,6 @@
 export interface OrderAddressModel {
-  name: string;
+  firstName: string;
+  lastName: string;
   company: string;
   addressLine1: string;
   addressLine2: string;
@@ -8,4 +9,6 @@ export interface OrderAddressModel {
   country: string;
   email: string;
   phone: string;
+  pickUpPointId: string;
+  pickUpPointName: string;
 }

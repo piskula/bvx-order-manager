@@ -22,5 +22,13 @@
     "pathRewrite": {
       "^/sk-post-api": ""
     }
+  },
+  "/packeta/*": {
+    "target": "https://www.zasilkovna.cz/api/rest",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/packeta": ""
+    }
   }
 }

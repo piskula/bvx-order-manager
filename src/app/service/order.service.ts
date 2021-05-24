@@ -56,7 +56,8 @@ export class OrderService {
         type: shipping?.method_id,
         title: shipping?.method_title,
         address: {
-          name: order?.shipping?.first_name + ' ' + order?.shipping?.last_name,
+          firstName: order?.shipping?.first_name,
+          lastName: order?.shipping?.last_name,
           company: order?.shipping?.company,
           addressLine1: order?.shipping?.address_1,
           addressLine2: order?.shipping?.address_2,
@@ -65,6 +66,8 @@ export class OrderService {
           country: order?.shipping?.country,
           email: order?.billing?.email,
           phone: order?.billing?.phone,
+          pickUpPointId: this.getValueForKeyIfExists(shipping, 'zasilkovna-pickup-point-id'),
+          pickUpPointName: this.getValueForKeyIfExists(shipping, 'zasilkovna-pickup-point-name'),
         },
       },
       paymentMethod: order?.payment_method,
@@ -83,4 +86,7 @@ export class OrderService {
     }
   }
 
+  private getValueForKeyIfExists(shippingLine: any, key: string): string {
+    return ((shippingLine?.meta_data) as any[]).find(meta => meta?.key === key)?.value;
+  }
 }

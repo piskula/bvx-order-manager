@@ -30,7 +30,7 @@ export class SkPostService {
     const packages = orders.map(order => `
       <Zasielka>
         <Adresat>
-          <Meno>${order.shipping.address.name}</Meno>
+          <Meno>${order.shipping.address.firstName} ${order.shipping.address.lastName}</Meno>
           <Organizacia>${order.shipping.address.company}</Organizacia>
           <Ulica>${order.shipping.address.addressLine1}</Ulica>
           <Mesto>${order.shipping.address.city}</Mesto>

@@ -30,14 +30,15 @@
         <span class="ml-5">Zásielkovňa (Pick up point + kuriér)</span>
       </h3>
       <p>
-        <button mat-raised-button color="accent" [disabled]="loadingPacketa || successPacketa || errorPacketa">
+        <button mat-raised-button color="accent" [disabled]="loadingPacketa || successPacketa || packetaParcelsErrors.length > 0" (click)="registerPacketaParcels()">
           Register {{ordersCourier.length + ordersPickUpPoints.length}} parcels for Zásielkovňa<mat-spinner diameter="25" class="d-inline-block ml-5" *ngIf="loadingPacketa"></mat-spinner>
         </button>
-        <span class="d-inline-block ml-5 color-green" *ngIf="successPacketa && (ordersCourier.length > 0 || ordersPickUpPoints.length > 0)">
-          <span class="d-flex vertical-align-items">Successfully done<mat-icon>check</mat-icon></span></span>
-        <span class="d-inline-block ml-5 color-pink" *ngIf="errorPacketa && (ordersCourier.length > 0 || ordersPickUpPoints.length > 0)">
-          <span class="d-flex vertical-align-items">Error<mat-icon>error</mat-icon></span></span>
+        <span class="d-inline-block ml-5 color-green" *ngIf="!loadingPacketa && packetaParcelsNumberOfDone > 0">
+          <span class="d-flex vertical-align-items">Successfully registered {{packetaParcelsNumberOfDone}} parcels<mat-icon>check</mat-icon></span></span>
+        <span class="d-inline-block ml-5 color-pink" *ngIf="packetaParcelsErrors.length > 0">
+          <span class="d-flex vertical-align-items">Error appeared when importing {{packetaParcelsErrored.length}} parcels<mat-icon>error</mat-icon></span></span>
       </p>
+      <p class="color-pink" *ngFor="let error of packetaParcelsErrors">{{error}}</p>
 
       <div class="text-right">
         <button mat-raised-button matStepperNext color="primary" [disabled]="!successSkPosta || !successPacketa">Next<mat-icon class="ml-5">east</mat-icon></button>

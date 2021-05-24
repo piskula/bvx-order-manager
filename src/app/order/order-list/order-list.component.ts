@@ -23,7 +23,7 @@ export class OrderListComponent extends BaseComponent implements OnInit, OnDestr
   selectedPost = 0;
   selectedCourier = 0;
 
-  displayedColumns: string[] = ['select', 'number', 'title', 'date', 'shipping', 'total', 'invoice', 'arrow', 'invoice-proforma'];
+  displayedColumns: string[] = ['select', 'number', 'title', 'date', 'shipping', 'country', 'total', 'invoice', 'arrow', 'invoice-proforma'];
   selection = new SelectionModel<OrderModel>(true, []);
   disabledStatuses = ['cancelled', 'refunded', 'failed', 'trash'];
 

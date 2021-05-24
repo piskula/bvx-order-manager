@@ -60,11 +60,11 @@
 
           <mat-icon *ngSwitchCase="'2'" [matTooltip]="element.shipping.title"
                     class="{{disabledStatuses.includes(element.status) ? 'row-disabled' : 'color-cyan'}}">location_on</mat-icon>
-          <span *ngSwitchCase="'2'"
+          <span *ngSwitchCase="'2'" [matTooltip]="element.shipping.address.pickUpPointName"
                 class="ml-5 {{disabledStatuses.includes(element.status) ? 'row-disabled' : 'color-cyan'}}">Pick-up Point</span>
           <mat-icon *ngSwitchCase="'5'" [matTooltip]="element.shipping.title"
                     class="{{disabledStatuses.includes(element.status) ? 'row-disabled' : 'color-cyan'}}">location_on</mat-icon>
-          <span *ngSwitchCase="'5'"
+          <span *ngSwitchCase="'5'" [matTooltip]="element.shipping.address.pickUpPointName"
                 class="ml-5 {{disabledStatuses.includes(element.status) ? 'row-disabled' : 'color-cyan'}}">Pick-up Point</span>
 
           <mat-icon *ngSwitchCase="'6'" [matTooltip]="element.shipping.title"
@@ -76,7 +76,20 @@
           <span *ngSwitchCase="'9'"
                 class="ml-5 {{disabledStatuses.includes(element.status) ? 'row-disabled' : 'color-cyan'}}">Kuriér</span>
 
-          <mat-icon *ngSwitchDefault [matTooltip]="element.shipping.title">error</mat-icon>
+          <mat-icon *ngSwitchDefault [matTooltip]="element.shipping.title" color="warn">help</mat-icon>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="country">
+        <mat-header-cell *matHeaderCellDef class="small-column">Country</mat-header-cell>
+        <mat-cell *matCellDef="let element" class="small-column">
+          <mat-chip-list class="ml-5">
+            <mat-chip
+              [color]="['SK', 'CZ'].includes(element.shipping.address.country) ? 'accent' : 'warn'"
+              selected>
+              {{element.shipping.address.country}}
+            </mat-chip>
+          </mat-chip-list>
         </mat-cell>
       </ng-container>
 

@@ -2,15 +2,16 @@ import {Component} from '@angular/core';
 import {OrderModel} from '../../model/order/order.model';
 import {SendOrdersStore} from '../../service/helper/send-orders.store';
 import {SkPostService} from '../../service/sk-post.service';
-import {catchError, finalize, take, tap} from 'rxjs/operators';
+import {catchError, finalize, map, take, tap} from 'rxjs/operators';
 import {forkJoin, of, throwError} from 'rxjs';
 import {OrderService} from '../../service/order.service';
+import {PacketaService} from '../../service/packeta.service';
 
 @Component({
   selector: 'app-send-orders',
   templateUrl: './send-orders.component.html',
   styleUrls: ['./send-orders.component.scss'],
-  providers: [SkPostService, OrderService],
+  providers: [SkPostService, PacketaService, OrderService],
 })
 export class SendOrdersComponent {
 
@@ -26,8 +27,10 @@ export class SendOrdersComponent {
   skPostSheetId = null;
 
   successPacketa = false;
-  errorPacketa = false;
   loadingPacketa = false;
+  packetaParcelsNumberOfDone = 0;
+  packetaParcelsErrors: string[] = [];
+  packetaParcelsErrored: OrderModel[] = [];
 
   statusesUpdateNumberOfDone = 0;
   statusesUpdateErrors: OrderModel[] = [];
@@ -36,6 +39,7 @@ export class SendOrdersComponent {
   constructor(
     private sendOrdersStore: SendOrdersStore,
     private skPostService: SkPostService,
+    private packetaService: PacketaService,
     private orderService: OrderService,
   ) {
     this.orders = this.sendOrdersStore.orders;
@@ -67,6 +71,33 @@ export class SendOrdersComponent {
         }),
         finalize(() => this.loadingSkPosta = false),
       ).subscribe();
+  }
+
+  registerPacketaParcels(): void {
+    this.loadingPacketa = true;
+    forkJoin(
+      this.ordersCourier.concat(this.ordersPickUpPoints).map(order =>
+        this.packetaService.registerPackage(order)
+          .pipe(
+            map(response => {
+              const xmlStatus = response.match(/<status>(.+)<\/status>/)[1];
+              if (xmlStatus !== 'ok') {
+                this.packetaParcelsErrors = this.packetaParcelsErrors.concat(response.match(/<fault>([^<>]+)<\/fault>/g));
+                throw new Error(status);
+              }
+            }),
+            tap(() => this.packetaParcelsNumberOfDone++),
+            catchError((err) => {
+              this.packetaParcelsErrored.push(order);
+              console.error(err);
+              return of(undefined);
+            }),
+          )
+      )
+    ).pipe(
+      tap(() => this.successPacketa = this.packetaParcelsErrored.length === 0),
+      finalize(() => this.loadingPacketa = false),
+    ).subscribe();
   }
 
   updateStatusesInWpToCompleted(): void {
