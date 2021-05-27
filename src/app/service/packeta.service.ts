@@ -7,13 +7,21 @@ import {OrderModel} from '../model/order/order.model';
 @Injectable()
 export class PacketaService {
 
+  constructor(private httpClient: HttpClient) {
+    this.headers = this.headers.set('Content-Type', 'application/xml');
+  }
+
   private readonly URL = environment.packeta.url;
   private readonly PACKETA_API_PASSWORD = environment.packeta.apiPassword;
 
   private headers = new HttpHeaders();
 
-  constructor(private httpClient: HttpClient) {
-    this.headers = this.headers.set('Content-Type', 'application/xml');
+  static getStatusFromResponse(response: string): string {
+    return response.match(/<status>(.+)<\/status>/)[1];
+  }
+
+  static getErrorsFromResponse(response: string): string[] {
+    return response.match(/<fault>([^<>]+)<\/fault>/g);
   }
 
   registerPackage(order: OrderModel): Observable<string> {

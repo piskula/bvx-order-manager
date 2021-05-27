@@ -15,6 +15,8 @@ $color-pink-light: #FFC1E3;
 $color-blue: #1E88E5;
 $color-blue-light: #81D4FA;
 
+$color-red: #960018;
+
 .color-orange,
 .color-status-2 {
   color: $color-orange;
@@ -42,8 +44,14 @@ $color-blue-light: #81D4FA;
 .color-on-hold {
   background-color: $color-blue !important;
 }
+.color-bg-green,
 .color-fully-paid {
   background-color: $color-green !important;
+  color: white;
+}
+.color-bg-red {
+  background-color: $color-red !important;
+  color: white;
 }
 .color-processing {
   background-color: $color-orange !important;

@@ -42,19 +42,14 @@
         </app-detail-value>
 
         <app-detail-value title="One click send to this address:">
-          <button mat-raised-button class="color-orange" (click)="registerSkPostParcel()" [disabled]="loadingSkPosta || successSkPosta || errorSkPosta">
-            <mat-icon>local_post_office</mat-icon><span class="ml-5">Slovak post<mat-spinner diameter="25" class="d-inline-block ml-5" *ngIf="loadingSkPosta"></mat-spinner></span>
+          <button mat-raised-button class="color-orange" (click)="registerSkPostParcel()" [disabled]="loadingSkPosta">
+            <mat-icon>local_post_office</mat-icon>
+            <span class="ml-5">Slovak post<mat-spinner diameter="25" class="d-inline-block ml-5" *ngIf="loadingSkPosta"></mat-spinner></span>
           </button>
-          <p class="send-status">
-            <span class="d-inline-block color-green" *ngIf="successSkPosta">
-              <span class="d-flex vertical-align-items">Slovak Post SheetId:&nbsp;<span style="font-family: monospace; font-weight: 600">
-                <a [href]="'https://mojezasielky.posta.sk/#sheets/' + skPostSheetId" target="_blank" style="color: inherit">{{skPostSheetId}}</a></span>
-              </span>
-            </span>
-            <span class="d-inline-block color-pink" *ngIf="errorSkPosta">
-              <span class="d-flex vertical-align-items">Error<mat-icon>error</mat-icon></span></span>
-          </p>
-
+          <button mat-raised-button class="color-cyan" (click)="registerPacketaParcel()" [disabled]="loadingPacketa">
+            <mat-icon>local_shipping</mat-icon>
+            <span class="ml-5">Courier<mat-spinner diameter="25" class="d-inline-block ml-5" *ngIf="loadingPacketa"></mat-spinner></span>
+          </button>
         </app-detail-value>
 
         <app-detail-value title="Phone:">
