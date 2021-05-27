@@ -42,8 +42,8 @@
         </app-detail-value>
 
         <app-detail-value title="One click send to this address:">
-          <button mat-raised-button class="color-orange" (click)="registerSkPostParcel()">
-            <mat-icon>local_post_office</mat-icon><span class="ml-5">Slovak post</span>
+          <button mat-raised-button class="color-orange" (click)="registerSkPostParcel()" [disabled]="loadingSkPosta || successSkPosta || errorSkPosta">
+            <mat-icon>local_post_office</mat-icon><span class="ml-5">Slovak post<mat-spinner diameter="25" class="d-inline-block ml-5" *ngIf="loadingSkPosta"></mat-spinner></span>
           </button>
           <p class="send-status">
             <span class="d-inline-block color-green" *ngIf="successSkPosta">
