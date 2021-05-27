@@ -41,6 +41,22 @@
           <p>{{invoice.client.deliveryAddress.country.name}}</p>
         </app-detail-value>
 
+        <app-detail-value title="One click send to this address:">
+          <button mat-raised-button class="color-orange" (click)="registerSkPostParcel()">
+            <mat-icon>local_post_office</mat-icon><span class="ml-5">Slovak post</span>
+          </button>
+          <p class="send-status">
+            <span class="d-inline-block color-green" *ngIf="successSkPosta">
+              <span class="d-flex vertical-align-items">Slovak Post SheetId:&nbsp;<span style="font-family: monospace; font-weight: 600">
+                <a [href]="'https://mojezasielky.posta.sk/#sheets/' + skPostSheetId" target="_blank" style="color: inherit">{{skPostSheetId}}</a></span>
+              </span>
+            </span>
+            <span class="d-inline-block color-pink" *ngIf="errorSkPosta">
+              <span class="d-flex vertical-align-items">Error<mat-icon>error</mat-icon></span></span>
+          </p>
+
+        </app-detail-value>
+
         <app-detail-value title="Phone:">
           {{invoice.client.phone}}
         </app-detail-value>

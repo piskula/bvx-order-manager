@@ -1,17 +1,21 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {InvoiceService} from '../../service/invoice.service';
 import {ActivatedRoute} from '@angular/router';
-import {SuperInvoiceModel} from '../../model/invoice/super-invoice.model';
-import {catchError, finalize, take, takeUntil, tap} from 'rxjs/operators';
-import {BaseComponent} from '../../common/base-component/base.component';
-import {throwError} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
+import {catchError, finalize, take, takeUntil, tap} from 'rxjs/operators';
+import {throwError} from 'rxjs';
+import {InvoiceService} from '../../service/invoice.service';
+import {SuperInvoiceModel} from '../../model/invoice/super-invoice.model';
+import {BaseComponent} from '../../common/base-component/base.component';
+import {SkPostService} from '../../service/sk-post.service';
+import {PacketaService} from '../../service/packeta.service';
+import {OrderModel} from '../../model/order/order.model';
+import {ShippingModel} from '../../model/order/shipping.model';
 
 @Component({
   selector: 'app-order-detail',
   templateUrl: './invoice-detail.component.html',
   styleUrls: ['./invoice-detail.component.scss'],
-  providers: [InvoiceService],
+  providers: [InvoiceService, SkPostService, PacketaService],
 })
 export class InvoiceDetailComponent extends BaseComponent implements OnInit, OnDestroy {
 
@@ -22,9 +26,16 @@ export class InvoiceDetailComponent extends BaseComponent implements OnInit, OnD
 
   displayedColumns: string[] = ['quantity', 'title', 'unitPrice', 'totalPrice'];
 
+  successSkPosta = false;
+  errorSkPosta = false;
+  loadingSkPosta = false;
+  skPostSheetId = null;
+
   constructor(
     private invoiceService: InvoiceService,
     private activatedRoute: ActivatedRoute,
+    private skPostService: SkPostService,
+    private packetaService: PacketaService,
   ) {
     super();
   }
@@ -55,6 +66,45 @@ export class InvoiceDetailComponent extends BaseComponent implements OnInit, OnD
 
   ngOnDestroy(): void {
     super.ngOnDestroy();
+  }
+
+  registerSkPostParcel(): void {
+    this.loadingSkPosta = true;
+    this.skPostService.importSheet([this.getOrderFromInvoice()])
+      .pipe(
+        take(1),
+        tap(sheetId => this.skPostSheetId = sheetId),
+        tap(() => this.successSkPosta = true),
+        catchError(err => {
+          this.errorSkPosta = true;
+          return throwError(err);
+        }),
+        finalize(() => this.loadingSkPosta = false),
+      ).subscribe();
+  }
+
+  registerPacketaParcel(): void {
+    // TODO
+  }
+
+  private getOrderFromInvoice(): OrderModel {
+    return {
+      number: this.invoice.invoice.number,
+      shipping: {
+        address: {
+          firstName: this.invoice.client.deliveryAddress.name,
+          lastName: '',
+          company: '',
+          addressLine1: this.invoice.client.deliveryAddress.addressLine,
+          addressLine2: '',
+          city: this.invoice.client.deliveryAddress.city,
+          zip: this.invoice.client.deliveryAddress.zip,
+          country: this.invoice.client.deliveryAddress.country.iso,
+          email: this.invoice.client.email,
+          phone: this.invoice.client.phone,
+        },
+      } as ShippingModel,
+    } as OrderModel;
   }
 
 }
