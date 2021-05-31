@@ -3,6 +3,7 @@ import {Observable} from 'rxjs';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {environment} from '../../environments/environment';
 import {OrderModel} from '../model/order/order.model';
+import {map} from 'rxjs/operators';
 
 @Injectable()
 export class PacketaService {
@@ -24,8 +25,21 @@ export class PacketaService {
     return response.match(/<fault>([^<>]+)<\/fault>/g);
   }
 
+  static getBarcodesFromResponse(response: string): string[] {
+    return response.match(/<barcodeText>(.+)<\/barcodeText>/).slice(1);
+  }
+
   registerPackage(order: OrderModel): Observable<string> {
-    return this.httpClient.post(this.URL, this.getPacketXml(order), {headers: this.headers, responseType: 'text'});
+    return this.httpClient.post(this.URL, this.getPacketXml(order), {headers: this.headers, responseType: 'text'})
+      .pipe(
+        map(response => {
+          if (PacketaService.getStatusFromResponse(response) !== 'ok') {
+            throw new Error(PacketaService.getErrorsFromResponse(response).join('\n'));
+          } else {
+            return PacketaService.getBarcodesFromResponse(response)[0];
+          }
+        }),
+      );
   }
 
   private getPacketXml(order: OrderModel): string {

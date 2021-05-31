@@ -11,17 +11,12 @@
         <mat-icon [matBadge]="ordersSlovakPost.length">local_post_office</mat-icon><span class="ml-5">Slovak post</span>
       </h3>
       <p>
-        <button mat-raised-button color="accent" [disabled]="loadingSkPosta || successSkPosta || errorSkPosta" (click)="registerSkPostParcels()">
+        <button mat-raised-button color="accent" [disabled]="loadingSkPosta || successSkPosta" (click)="registerSkPostParcels()">
           Register {{ordersSlovakPost.length}} parcels for Slovak Post<mat-spinner diameter="25" class="d-inline-block ml-5" *ngIf="loadingSkPosta"></mat-spinner>
         </button>
         <span class="d-inline-block ml-5 color-green" *ngIf="successSkPosta && ordersSlovakPost.length > 0">
           <span class="d-flex vertical-align-items">Successfully done<mat-icon>check</mat-icon></span></span>
-        <span class="d-inline-block ml-5 color-pink" *ngIf="errorSkPosta && ordersSlovakPost.length > 0">
-          <span class="d-flex vertical-align-items">Error<mat-icon>error</mat-icon></span></span>
       </p>
-      <p *ngIf="skPostSheetId" class="color-green">Slovak Post SheetId: <span style="font-family: monospace; font-weight: 600">
-        <a [href]="'https://mojezasielky.posta.sk/#sheets/' + skPostSheetId" target="_blank" style="color: inherit">{{skPostSheetId}}</a>
-      </span></p>
 
       <h3 class="d-flex vertical-align-items color-cyan">
         <mat-icon [matBadge]="ordersPickUpPoints.length">location_on</mat-icon>

@@ -2,10 +2,11 @@ import {Component} from '@angular/core';
 import {OrderModel} from '../../model/order/order.model';
 import {SendOrdersStore} from '../../service/helper/send-orders.store';
 import {SkPostService} from '../../service/sk-post.service';
-import {catchError, finalize, map, take, tap} from 'rxjs/operators';
+import {catchError, finalize, take, tap} from 'rxjs/operators';
 import {forkJoin, of, throwError} from 'rxjs';
 import {OrderService} from '../../service/order.service';
 import {PacketaService} from '../../service/packeta.service';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-send-orders',
@@ -22,9 +23,7 @@ export class SendOrdersComponent {
   ordersCourier: OrderModel[] = [];
 
   successSkPosta = false;
-  errorSkPosta = false;
   loadingSkPosta = false;
-  skPostSheetId = null;
 
   successPacketa = false;
   loadingPacketa = false;
@@ -41,6 +40,7 @@ export class SendOrdersComponent {
     private skPostService: SkPostService,
     private packetaService: PacketaService,
     private orderService: OrderService,
+    private snackBar: MatSnackBar,
   ) {
     this.orders = this.sendOrdersStore.orders;
 
@@ -63,10 +63,10 @@ export class SendOrdersComponent {
     this.skPostService.importSheet(this.ordersSlovakPost)
       .pipe(
         take(1),
-        tap(sheetId => this.skPostSheetId = sheetId),
+        tap(sheetId => this.skPostService.showSuccessSheetIdMessage(sheetId)),
         tap(() => this.successSkPosta = true),
         catchError(err => {
-          this.errorSkPosta = true;
+          this.showErrorMessage(err);
           return throwError(err);
         }),
         finalize(() => this.loadingSkPosta = false),
@@ -79,17 +79,11 @@ export class SendOrdersComponent {
       this.ordersCourier.concat(this.ordersPickUpPoints).map(order =>
         this.packetaService.registerPackage(order)
           .pipe(
-            map(response => {
-              const xmlStatus = response.match(/<status>(.+)<\/status>/)[1];
-              if (xmlStatus !== 'ok') {
-                this.packetaParcelsErrors = this.packetaParcelsErrors.concat(response.match(/<fault>([^<>]+)<\/fault>/g));
-                throw new Error(status);
-              }
-            }),
+            tap(barcode => console.log('Packet registered: ' + barcode)),
             tap(() => this.packetaParcelsNumberOfDone++),
             catchError((err) => {
+              this.packetaParcelsErrors = this.packetaParcelsErrors.concat(err);
               this.packetaParcelsErrored.push(order);
-              console.error(err);
               return of(undefined);
             }),
           )
@@ -117,6 +111,17 @@ export class SendOrdersComponent {
     ).pipe(
       finalize(() => this.statusesUpdateOngoing = false),
     ).subscribe();
+  }
+
+  private showErrorMessage(extraInfo: string = null): void {
+    this.snackBar.open(
+      extraInfo,
+      'Dismiss',
+      {
+        panelClass: ['color-bg-red'],
+        duration: 3500,
+      },
+    );
   }
 
 }

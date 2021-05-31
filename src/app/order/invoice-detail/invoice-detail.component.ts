@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {HttpErrorResponse} from '@angular/common/http';
-import {catchError, finalize, map, take, takeUntil, tap} from 'rxjs/operators';
+import {catchError, finalize, take, takeUntil, tap} from 'rxjs/operators';
 import {throwError} from 'rxjs';
 import {InvoiceService} from '../../service/invoice.service';
 import {SuperInvoiceModel} from '../../model/invoice/super-invoice.model';
@@ -74,9 +74,9 @@ export class InvoiceDetailComponent extends BaseComponent implements OnInit, OnD
     this.skPostService.importSheet([this.getOrderFromInvoice()])
       .pipe(
         take(1),
-        tap(sheetId => this.showSuccessSheetIdMessage(sheetId)),
+        tap(sheetId => this.skPostService.showSuccessSheetIdMessage(sheetId)),
         catchError(err => {
-          this.showErrorMessage();
+          this.showErrorMessage(err);
           return throwError(err);
         }),
         finalize(() => this.loadingSkPosta = false),
@@ -87,32 +87,18 @@ export class InvoiceDetailComponent extends BaseComponent implements OnInit, OnD
     this.loadingPacketa = true;
     this.packetaService.registerPackage(this.getOrderFromInvoice())
       .pipe(
-        map(response => {
-          if (PacketaService.getStatusFromResponse(response) !== 'ok') {
-            this.showErrorMessage(PacketaService.getErrorsFromResponse(response));
-            throw new Error(status);
-          } else {
-            return response.match(/<barcodeText>(.+)<\/barcodeText>/)[1];
-          }
-        }),
+        take(1),
         tap(barcode => this.showSuccessPacketaMessage(barcode)),
+        catchError(err => {
+          this.showErrorMessage(err);
+          return throwError(err);
+        }),
         finalize(() => this.loadingPacketa = false),
       ).subscribe();
   }
 
-  private showSuccessSheetIdMessage(sheetId: string): void {
-    this.snackBar.openFromComponent(
-      SheetSnackbarComponent,
-      {
-        data: {sheetId},
-        panelClass: ['color-bg-green'],
-        duration: 5000,
-      },
-    );
-  }
-
-  private showErrorMessage(extraInfo: string[] = []): void {
-    console.log(extraInfo); // TODO show in error
+  private showErrorMessage(extraInfo: string = null): void {
+    console.log(extraInfo);
     this.snackBar.open(
       'Error creating sheet',
       'Dismiss',

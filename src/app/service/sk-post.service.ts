@@ -1,9 +1,11 @@
 import {Injectable} from '@angular/core';
-import {Observable} from 'rxjs';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {Observable, throwError} from 'rxjs';
+import {HttpClient, HttpErrorResponse, HttpHeaders} from '@angular/common/http';
 import {environment} from '../../environments/environment';
 import {OrderModel} from '../model/order/order.model';
-import {map} from 'rxjs/operators';
+import {catchError, map} from 'rxjs/operators';
+import {SheetSnackbarComponent} from '../common/snackbar/sheet.snackbar';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Injectable()
 export class SkPostService {
@@ -14,7 +16,10 @@ export class SkPostService {
 
   private headers = new HttpHeaders();
 
-  constructor(private httpClient: HttpClient) {
+  constructor(
+    private httpClient: HttpClient,
+    private snackBar: MatSnackBar,
+  ) {
     this.headers = this.headers.set('SOAPAction', 'importSheet');
     this.headers = this.headers.set('Content-Type', 'application/xml');
   }
@@ -23,7 +28,19 @@ export class SkPostService {
     return this.httpClient.post(this.URL, this.getSheetXml(orders), {headers: this.headers, responseType: 'text'})
       .pipe(
         map(xmlResponse => xmlResponse.match(/<sheetId>(.+)<\/sheetId>/)[1]),
+        catchError((err: HttpErrorResponse) => throwError(err.statusText)),
       );
+  }
+
+  showSuccessSheetIdMessage(sheetId: string): void {
+    this.snackBar.openFromComponent(
+      SheetSnackbarComponent,
+      {
+        data: {sheetId},
+        panelClass: ['color-bg-green'],
+        duration: 5000,
+      },
+    );
   }
 
   private getSheetXml(orders: OrderModel[]): string {
