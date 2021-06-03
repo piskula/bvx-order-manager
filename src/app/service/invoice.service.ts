@@ -4,9 +4,9 @@ import {map} from 'rxjs/operators';
 import {InvoiceModel, StatusModel} from '../model/invoice/invoice.model';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {SuperInvoiceModel} from '../model/invoice/super-invoice.model';
-import {TagModel} from '../model/invoice/tag.model';
 import {environment} from '../../environments/environment';
 import {ItemModel} from '../model/invoice/item.model';
+import {SuperFakturaResponse} from '../model/invoice/super-faktura-response.model';
 
 @Injectable()
 export class InvoiceService {
@@ -38,6 +38,17 @@ export class InvoiceService {
       .pipe(
         map((invoice: any) => this.mapInvoice(invoice)),
       );
+  }
+
+  payInvoice(invoiceId: number): Observable<SuperFakturaResponse> {
+    const payload = new FormData();
+    payload.append('data', `{"InvoicePayment":{"invoice_id":${invoiceId}}}`);
+
+    return this.httpClient.post<SuperFakturaResponse>(
+      `${this.URL}/invoice_payments/add/ajax:1/api:1`,
+      payload,
+      {headers: this.headers},
+    );
   }
 
   private mapInvoice(invoice: any): SuperInvoiceModel {

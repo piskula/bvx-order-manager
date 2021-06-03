@@ -4,8 +4,6 @@ import {HttpClient, HttpErrorResponse, HttpHeaders} from '@angular/common/http';
 import {environment} from '../../environments/environment';
 import {OrderModel} from '../model/order/order.model';
 import {catchError, map} from 'rxjs/operators';
-import {SheetSnackbarComponent} from '../common/snackbar/sheet.snackbar';
-import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Injectable()
 export class SkPostService {
@@ -18,7 +16,6 @@ export class SkPostService {
 
   constructor(
     private httpClient: HttpClient,
-    private snackBar: MatSnackBar,
   ) {
     this.headers = this.headers.set('SOAPAction', 'importSheet');
     this.headers = this.headers.set('Content-Type', 'application/xml');
@@ -30,17 +27,6 @@ export class SkPostService {
         map(xmlResponse => xmlResponse.match(/<sheetId>(.+)<\/sheetId>/)[1]),
         catchError((err: HttpErrorResponse) => throwError(err.statusText)),
       );
-  }
-
-  showSuccessSheetIdMessage(sheetId: string): void {
-    this.snackBar.openFromComponent(
-      SheetSnackbarComponent,
-      {
-        data: {sheetId},
-        panelClass: ['color-bg-green'],
-        duration: 5000,
-      },
-    );
   }
 
   private getSheetXml(orders: OrderModel[]): string {

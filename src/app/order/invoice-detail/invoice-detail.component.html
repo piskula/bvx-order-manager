@@ -27,9 +27,16 @@
         </app-detail-value>
 
         <app-detail-value title="Status:">
-          <mat-chip-list>
+          <mat-chip-list class="d-inline-block">
             <mat-chip class="color-{{invoice.invoice.flag}}" selected>{{invoice.invoice.flag}}</mat-chip>
           </mat-chip-list>
+          <mat-icon class="ml-5" *ngIf="invoice.invoice.status.status !== '3'">east</mat-icon>
+          <button mat-raised-button color="accent" class="ml-5"
+                  *ngIf="invoice.invoice.status.status !== '3'"
+                  (click)="markAsPaid()">
+            <mat-icon>attach_money</mat-icon>
+            <span>Mark as PAID<mat-spinner diameter="25" class="d-inline-block ml-5" *ngIf="loadingPaymentMarking"></mat-spinner></span>
+          </button>
         </app-detail-value>
       </div>
 

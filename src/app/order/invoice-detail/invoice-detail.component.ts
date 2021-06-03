@@ -10,8 +10,7 @@ import {SkPostService} from '../../service/sk-post.service';
 import {PacketaService} from '../../service/packeta.service';
 import {OrderModel} from '../../model/order/order.model';
 import {ShippingModel} from '../../model/order/shipping.model';
-import {MatSnackBar} from '@angular/material/snack-bar';
-import {SheetSnackbarComponent} from '../../common/snackbar/sheet.snackbar';
+import {SnackbarService} from '../../common/snackbar/snackbar.service';
 
 @Component({
   selector: 'app-order-detail',
@@ -30,13 +29,14 @@ export class InvoiceDetailComponent extends BaseComponent implements OnInit, OnD
 
   loadingSkPosta = false;
   loadingPacketa = false;
+  loadingPaymentMarking = false;
 
   constructor(
     private invoiceService: InvoiceService,
     private activatedRoute: ActivatedRoute,
     private skPostService: SkPostService,
     private packetaService: PacketaService,
-    private snackBar: MatSnackBar,
+    private snackbarService: SnackbarService,
   ) {
     super();
   }
@@ -74,9 +74,9 @@ export class InvoiceDetailComponent extends BaseComponent implements OnInit, OnD
     this.skPostService.importSheet([this.getOrderFromInvoice()])
       .pipe(
         take(1),
-        tap(sheetId => this.skPostService.showSuccessSheetIdMessage(sheetId)),
+        tap(sheetId => this.snackbarService.showSuccessSheetIdMessage(sheetId)),
         catchError(err => {
-          this.showErrorMessage(err);
+          this.snackbarService.showErrorMessage('Error creating SK Post sheet', err);
           return throwError(err);
         }),
         finalize(() => this.loadingSkPosta = false),
@@ -88,36 +88,30 @@ export class InvoiceDetailComponent extends BaseComponent implements OnInit, OnD
     this.packetaService.registerPackage(this.getOrderFromInvoice())
       .pipe(
         take(1),
-        tap(barcode => this.showSuccessPacketaMessage(barcode)),
+        tap(barcode => this.snackbarService.showSimpleSuccess(`Parcel ${barcode} registered!`)),
         catchError(err => {
-          this.showErrorMessage(err);
+          this.snackbarService.showErrorMessage('Error registering package', err);
           return throwError(err);
         }),
         finalize(() => this.loadingPacketa = false),
       ).subscribe();
   }
 
-  private showErrorMessage(extraInfo: string = null): void {
-    console.log(extraInfo);
-    this.snackBar.open(
-      'Error creating sheet',
-      'Dismiss',
-      {
-        panelClass: ['color-bg-red'],
-        duration: 3500,
-      },
-    );
-  }
-
-  private showSuccessPacketaMessage(barcode: string): void {
-    this.snackBar.open(
-      `Parcel ${barcode} registered!`,
-      'Dismiss',
-      {
-        panelClass: ['color-bg-green'],
-        duration: 5000,
-      },
-    );
+  markAsPaid(): void {
+    this.loadingPaymentMarking = true;
+    this.invoiceService.payInvoice(this.invoiceId)
+      .pipe(
+        take(1),
+        tap(response => {
+          if (response.error !== 0) {
+            this.snackbarService.showErrorMessage(response.message);
+          } else {
+            this.snackbarService.showSimpleSuccess(response.flash_message.text);
+            this.resetDetail();
+          }
+        }),
+        finalize(() => this.loadingPaymentMarking = false),
+      ).subscribe();
   }
 
   private getOrderFromInvoice(): OrderModel {

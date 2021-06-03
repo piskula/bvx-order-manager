@@ -7,6 +7,7 @@ import {forkJoin, of, throwError} from 'rxjs';
 import {OrderService} from '../../service/order.service';
 import {PacketaService} from '../../service/packeta.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {SnackbarService} from '../../common/snackbar/snackbar.service';
 
 @Component({
   selector: 'app-send-orders',
@@ -41,6 +42,7 @@ export class SendOrdersComponent {
     private packetaService: PacketaService,
     private orderService: OrderService,
     private snackBar: MatSnackBar,
+    private snackbarService: SnackbarService,
   ) {
     this.orders = this.sendOrdersStore.orders;
 
@@ -63,10 +65,10 @@ export class SendOrdersComponent {
     this.skPostService.importSheet(this.ordersSlovakPost)
       .pipe(
         take(1),
-        tap(sheetId => this.skPostService.showSuccessSheetIdMessage(sheetId)),
+        tap(sheetId => this.snackbarService.showSuccessSheetIdMessage(sheetId)),
         tap(() => this.successSkPosta = true),
         catchError(err => {
-          this.showErrorMessage(err);
+          this.snackbarService.showErrorMessage(err);
           return throwError(err);
         }),
         finalize(() => this.loadingSkPosta = false),
@@ -111,17 +113,6 @@ export class SendOrdersComponent {
     ).pipe(
       finalize(() => this.statusesUpdateOngoing = false),
     ).subscribe();
-  }
-
-  private showErrorMessage(extraInfo: string = null): void {
-    this.snackBar.open(
-      extraInfo,
-      'Dismiss',
-      {
-        panelClass: ['color-bg-red'],
-        duration: 3500,
-      },
-    );
   }
 
 }
