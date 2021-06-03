@@ -30,6 +30,7 @@ export class InvoiceDetailComponent extends BaseComponent implements OnInit, OnD
   loadingSkPosta = false;
   loadingPacketa = false;
   loadingPaymentMarking = false;
+  loadingPaymentRemoval = false;
 
   constructor(
     private invoiceService: InvoiceService,
@@ -111,6 +112,23 @@ export class InvoiceDetailComponent extends BaseComponent implements OnInit, OnD
           }
         }),
         finalize(() => this.loadingPaymentMarking = false),
+      ).subscribe();
+  }
+
+  removePayment(paymentId): void {
+    this.loadingPaymentRemoval = true;
+    this.invoiceService.revertInvoicePayment(paymentId)
+      .pipe(
+        take(1),
+        tap(response => {
+          if (response?.error !== 0) {
+            this.snackbarService.showErrorMessage(response?.message);
+          } else {
+            this.snackbarService.showSimpleSuccess('Payment removed');
+            this.resetDetail();
+          }
+        }),
+        finalize(() => this.loadingPaymentRemoval = false),
       ).subscribe();
   }
 

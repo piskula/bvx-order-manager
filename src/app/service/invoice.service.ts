@@ -51,6 +51,14 @@ export class InvoiceService {
     );
   }
 
+  revertInvoicePayment(paymentId: number): Observable<any> {
+    return this.httpClient.request<any>(
+      'get',
+      `${this.URL}/invoice_payments/delete/${paymentId}`,
+      {headers: this.headers}
+    );
+  }
+
   private mapInvoice(invoice: any): SuperInvoiceModel {
     const proformaId = invoice?.Invoice?.proforma_id;
     const relatedItems: any[] = (invoice?.RelatedItems?.map(item => item?.Invoice) || []);
@@ -68,6 +76,7 @@ export class InvoiceService {
         parentRegularId: parentRegular?.id,
         parentRegularTitle: parentRegular?.invoice_no_formatted,
         paymentType: invoice?.Invoice?.payment_type,
+        paymentId: (invoice?.InvoicePayment?.length >= 1) ? invoice.InvoicePayment[0].id : null,
         orderNr: invoice?.Invoice?.order_no,
         amount: parseFloat(invoice?.Invoice?.amount),
         currency: invoice?.Invoice?.invoice_curreny,

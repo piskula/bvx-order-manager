@@ -6,6 +6,8 @@ export interface InvoiceModel {
   proformaTitle?: string;
   parentRegularId?: number;
   parentRegularTitle?: string;
+  paymentType?: string;
+  paymentId?: string | number;
   orderNr: number;
   amount: number;
   currency: string;

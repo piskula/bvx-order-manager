@@ -37,6 +37,12 @@
             <mat-icon>attach_money</mat-icon>
             <span>Mark as PAID<mat-spinner diameter="25" class="d-inline-block ml-5" *ngIf="loadingPaymentMarking"></mat-spinner></span>
           </button>
+          <button mat-raised-button color="accent" class="ml-5"
+                  *ngIf="invoice.invoice.paymentId"
+                  (click)="removePayment(invoice.invoice.paymentId)">
+            <mat-icon>delete_forever</mat-icon>
+            <span>Mark as NOT PAID<mat-spinner diameter="25" class="d-inline-block ml-5" *ngIf="loadingPaymentRemoval"></mat-spinner></span>
+          </button>
         </app-detail-value>
       </div>
 
