@@ -29,8 +29,8 @@ export class PacketaService {
     return response.match(/<barcodeText>(.+)<\/barcodeText>/).slice(1);
   }
 
-  registerPackage(order: OrderModel): Observable<string> {
-    return this.httpClient.post(this.URL, this.getPacketXml(order), {headers: this.headers, responseType: 'text'})
+  registerPackage(order: OrderModel, weight: number = 0): Observable<string> {
+    return this.httpClient.post(this.URL, this.getPacketXml(order, weight), {headers: this.headers, responseType: 'text'})
       .pipe(
         map(response => {
           if (PacketaService.getStatusFromResponse(response) !== 'ok') {
@@ -42,26 +42,35 @@ export class PacketaService {
       );
   }
 
-  private getPacketXml(order: OrderModel): string {
+  private getPacketXml(order: OrderModel, weight: number): string {
     const serviceOrPickUpPointId = this.extractServiceOrPickUpPointNumber(order);
     return `
 <createPacket>
     <apiPassword>${this.PACKETA_API_PASSWORD}</apiPassword>
     <packetAttributes>
         <number>${order.number}</number>
-        <name>${order.shipping.address.firstName}</name>
-        <surname>${order.shipping.address.lastName}</surname>
-        <company>${order.shipping.address.company}</company>
-        <street>${order.shipping.address.addressLine1}</street>
-        <city>${order.shipping.address.city}</city>
+        <name>${this.escapeChars(order.shipping.address.firstName)}</name>
+        <surname>${this.escapeChars(order.shipping.address.lastName)}</surname>
+        <company>${this.escapeChars(order.shipping.address.company)}</company>
+        <street>${this.escapeChars(order.shipping.address.addressLine1)}</street>
+        <city>${this.escapeChars(order.shipping.address.city)}</city>
         <zip>${order.shipping.address.zip}</zip>
         <email>${order.shipping.address.email}</email>
         <phone>${order.shipping.address.phone}</phone>
         <addressId>${serviceOrPickUpPointId}</addressId>
         <value>${order.total}</value>
+        <weight>${weight}</weight>
         <eshop>https://biovoxel.tech/</eshop>
     </packetAttributes>
 </createPacket>`;
+  }
+
+  private escapeChars(text: string): string {
+    return text.replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&apos;');
   }
 
   private extractServiceOrPickUpPointNumber(order: OrderModel): string {
@@ -84,8 +93,16 @@ export class PacketaService {
         return '131';
       case 'CZ':
         return '106';
+      case 'AT':
+        return '6830';
+      case 'DE':
+        return '111';
+      case 'ES':
+        return '4653';
       case 'RO':
         return '4161';
+      case 'US':
+        return '8289';
       default:
         return '-1';
     }
