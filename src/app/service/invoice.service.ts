@@ -7,6 +7,7 @@ import {SuperInvoiceModel} from '../model/invoice/super-invoice.model';
 import {environment} from '../../environments/environment';
 import {ItemModel} from '../model/invoice/item.model';
 import {SuperFakturaResponse} from '../model/invoice/super-faktura-response.model';
+import * as moment from 'moment';
 
 @Injectable()
 export class InvoiceService {
@@ -70,6 +71,7 @@ export class InvoiceService {
       invoice: {
         id: invoice?.Invoice?.id,
         number: invoice?.Invoice?.invoice_no_formatted,
+        date: moment(invoice?.Invoice?.created, 'YYYY-MM-DD HH:mm:ss'),
         type: invoice?.Invoice?.type,
         proformaId,
         proformaTitle,

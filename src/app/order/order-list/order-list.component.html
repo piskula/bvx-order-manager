@@ -53,9 +53,17 @@
       <ng-container matColumnDef="shipping">
         <mat-header-cell *matHeaderCellDef class="shipping-column-width">Shipping</mat-header-cell>
         <mat-cell *matCellDef="let element" [ngSwitch]="element.shipping.id" class="shipping-column-width">
+          <mat-icon *ngSwitchCase="'1'" [matTooltip]="element.shipping.title"
+                    class="{{disabledStatuses.includes(element.status) ? 'row-disabled' : 'color-orange'}}">local_post_office</mat-icon>
+          <span *ngSwitchCase="'1'"
+                class="ml-5 {{disabledStatuses.includes(element.status) ? 'row-disabled' : 'color-orange'}}">Pošta</span>
           <mat-icon *ngSwitchCase="'4'" [matTooltip]="element.shipping.title"
                     class="{{disabledStatuses.includes(element.status) ? 'row-disabled' : 'color-orange'}}">local_post_office</mat-icon>
           <span *ngSwitchCase="'4'"
+                class="ml-5 {{disabledStatuses.includes(element.status) ? 'row-disabled' : 'color-orange'}}">Pošta</span>
+          <mat-icon *ngSwitchCase="'7'" [matTooltip]="element.shipping.title"
+                    class="{{disabledStatuses.includes(element.status) ? 'row-disabled' : 'color-orange'}}">local_post_office</mat-icon>
+          <span *ngSwitchCase="'7'"
                 class="ml-5 {{disabledStatuses.includes(element.status) ? 'row-disabled' : 'color-orange'}}">Pošta</span>
 
           <mat-icon *ngSwitchCase="'2'" [matTooltip]="element.shipping.title"

@@ -55,11 +55,18 @@
         </app-detail-value>
 
         <app-detail-value title="One click send to this address:">
+          <p>
+            <mat-form-field appearance="standard">
+              <mat-label>Weight (grams)</mat-label>
+              <input matInput [(ngModel)]="weight" type="number" step="100" min="0" (click)="$event.target.select()">
+              <mat-hint *ngIf="weight <= 0">Please, fill in weight</mat-hint>
+            </mat-form-field>
+          </p>
           <button mat-raised-button class="color-orange" (click)="registerSkPostParcel()" [disabled]="loadingSkPosta">
             <mat-icon>local_post_office</mat-icon>
             <span class="ml-5">Slovak post<mat-spinner diameter="25" class="d-inline-block ml-5" *ngIf="loadingSkPosta"></mat-spinner></span>
           </button>
-          <button mat-raised-button class="color-cyan" (click)="registerPacketaParcel()" [disabled]="loadingPacketa">
+          <button mat-raised-button class="color-cyan ml-5" (click)="confirmSendingViaPacketa()" [disabled]="loadingPacketa">
             <mat-icon>local_shipping</mat-icon>
             <span class="ml-5">Courier<mat-spinner diameter="25" class="d-inline-block ml-5" *ngIf="loadingPacketa"></mat-spinner></span>
           </button>

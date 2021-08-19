@@ -1,0 +1,12 @@
+<h1 mat-dialog-title>Do you really want to register package into packeta?</h1>
+<mat-dialog-content>
+  <ul>
+    <li>Recipient <span class="color-pink" style="font-weight: 600">{{data.recipient}}</span> will be notified about this action</li>
+    <li>Weight of package is set to <span class="color-pink" style="font-weight: 600">{{data.weight / 1000}}&nbsp;Kg</span></li>
+    <li *ngIf="!['SK', 'CZ'].includes(data.countryCode.toUpperCase())">Package is shipped abroad ({{data.countryCode}})</li>
+  </ul>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button (click)="onNoClick()">No Thanks</button>
+  <button mat-raised-button color="warn" [mat-dialog-close]="true" cdkFocusInitial>Ok</button>
+</mat-dialog-actions>

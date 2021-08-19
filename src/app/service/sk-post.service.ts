@@ -44,6 +44,7 @@ export class SkPostService {
         </Adresat>
         <Info>
           <ZasielkaID>${order.number}</ZasielkaID>
+          <Hmotnost>${order.weightInGrams / 1000}</Hmotnost>
           <Poznamka/>
         </Info>
         <PouziteSluzby/>

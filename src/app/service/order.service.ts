@@ -51,6 +51,7 @@ export class OrderService {
       date: moment.utc(order?.date_created_gmt),
       currency: order?.currency,
       total: parseFloat(order?.total),
+      weightInGrams: 0,
       shipping: {
         id: shipping?.instance_id,
         type: shipping?.method_id,

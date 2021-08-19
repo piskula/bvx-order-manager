@@ -1,6 +1,9 @@
+import {Moment} from 'moment';
+
 export interface InvoiceModel {
   id: number;
   number: string;
+  date: Moment;
   type: 'cancel' | 'delivery' | 'draft' | 'estimate' | 'order' | 'proforma' | 'regular' | 'reverse_order';
   proformaId?: number;
   proformaTitle?: string;

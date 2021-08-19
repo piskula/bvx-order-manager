@@ -1,7 +1,8 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {HttpErrorResponse} from '@angular/common/http';
-import {catchError, finalize, take, takeUntil, tap} from 'rxjs/operators';
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
+import {catchError, filter, finalize, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {throwError} from 'rxjs';
 import {InvoiceService} from '../../service/invoice.service';
 import {SuperInvoiceModel} from '../../model/invoice/super-invoice.model';
@@ -11,6 +12,12 @@ import {PacketaService} from '../../service/packeta.service';
 import {OrderModel} from '../../model/order/order.model';
 import {ShippingModel} from '../../model/order/shipping.model';
 import {SnackbarService} from '../../common/snackbar/snackbar.service';
+
+export interface DialogData {
+  weight: number;
+  recipient: string;
+  countryCode: string;
+}
 
 @Component({
   selector: 'app-order-detail',
@@ -25,6 +32,8 @@ export class InvoiceDetailComponent extends BaseComponent implements OnInit, OnD
   invoiceId = this.activatedRoute?.snapshot?.params?.invoiceId;
   errorMsg = null;
 
+  weight = 0;
+
   displayedColumns: string[] = ['quantity', 'title', 'unitPrice', 'totalPrice'];
 
   loadingSkPosta = false;
@@ -38,6 +47,7 @@ export class InvoiceDetailComponent extends BaseComponent implements OnInit, OnD
     private skPostService: SkPostService,
     private packetaService: PacketaService,
     private snackbarService: SnackbarService,
+    private dialog: MatDialog,
   ) {
     super();
   }
@@ -72,7 +82,7 @@ export class InvoiceDetailComponent extends BaseComponent implements OnInit, OnD
 
   registerSkPostParcel(): void {
     this.loadingSkPosta = true;
-    this.skPostService.importSheet([this.getOrderFromInvoice()])
+    this.skPostService.importSheet([this.getOrderFromInvoice(this.weight)])
       .pipe(
         take(1),
         tap(sheetId => this.snackbarService.showSuccessSheetIdMessage(sheetId)),
@@ -86,7 +96,7 @@ export class InvoiceDetailComponent extends BaseComponent implements OnInit, OnD
 
   registerPacketaParcel(): void {
     this.loadingPacketa = true;
-    this.packetaService.registerPackage(this.getOrderFromInvoice())
+    this.packetaService.registerPackage(this.getOrderFromInvoice(this.weight))
       .pipe(
         take(1),
         tap(barcode => this.snackbarService.showSimpleSuccess(`Parcel ${barcode} registered!`)),
@@ -132,9 +142,27 @@ export class InvoiceDetailComponent extends BaseComponent implements OnInit, OnD
       ).subscribe();
   }
 
-  private getOrderFromInvoice(): OrderModel {
+  confirmSendingViaPacketa(): void {
+    const dialogRef = this.dialog.open(ConfirmSendingDialogComponent, {
+      width: '40rem',
+      data: {
+        weight: this.weight,
+        recipient: this.invoice.client.deliveryAddress.name,
+        countryCode: this.invoice.client.deliveryAddress.country.iso.toUpperCase(),
+      } as DialogData
+    });
+
+    dialogRef.afterClosed()
+      .pipe(
+        take(1),
+        filter(result => !!result),
+      ).subscribe(() => this.registerPacketaParcel());
+  }
+
+  private getOrderFromInvoice(weight: number = 0): OrderModel {
     return {
       total: this.invoice.invoice.amount,
+      weightInGrams: weight,
       number: this.invoice.invoice.number,
       shipping: {
         id: '6', // if sending by Packeta, use courier
@@ -152,6 +180,23 @@ export class InvoiceDetailComponent extends BaseComponent implements OnInit, OnD
         },
       } as ShippingModel,
     } as OrderModel;
+  }
+
+}
+
+@Component({
+  selector: 'app-confirm-sending-dialog',
+  templateUrl: 'confirm-sending-dialog.html',
+})
+export class ConfirmSendingDialogComponent {
+
+  constructor(
+    public dialogRef: MatDialogRef<ConfirmSendingDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: DialogData) {
+  }
+
+  onNoClick(): void {
+    this.dialogRef.close();
   }
 
 }

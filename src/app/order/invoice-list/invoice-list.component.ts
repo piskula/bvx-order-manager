@@ -16,7 +16,7 @@ export class InvoiceListComponent implements OnInit {
   list: SuperInvoiceModel[] = [];
   isLoading = false;
 
-  displayedColumns: string[] = ['invoice_nr', 'status', 'name', 'amount', 'paymentType', 'order', 'country', 'link'];
+  displayedColumns: string[] = ['invoice_nr', 'status', 'date', 'name', 'amount', 'paymentType', 'order', 'country', 'link'];
 
   constructor(
     private invoiceService: InvoiceService,

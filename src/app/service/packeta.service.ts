@@ -29,8 +29,8 @@ export class PacketaService {
     return response.match(/<barcodeText>(.+)<\/barcodeText>/).slice(1);
   }
 
-  registerPackage(order: OrderModel, weight: number = 0): Observable<string> {
-    return this.httpClient.post(this.URL, this.getPacketXml(order, weight), {headers: this.headers, responseType: 'text'})
+  registerPackage(order: OrderModel): Observable<string> {
+    return this.httpClient.post(this.URL, this.getPacketXml(order), {headers: this.headers, responseType: 'text'})
       .pipe(
         map(response => {
           if (PacketaService.getStatusFromResponse(response) !== 'ok') {
@@ -42,7 +42,7 @@ export class PacketaService {
       );
   }
 
-  private getPacketXml(order: OrderModel, weight: number): string {
+  private getPacketXml(order: OrderModel): string {
     const serviceOrPickUpPointId = this.extractServiceOrPickUpPointNumber(order);
     return `
 <createPacket>
@@ -59,7 +59,7 @@ export class PacketaService {
         <phone>${order.shipping.address.phone}</phone>
         <addressId>${serviceOrPickUpPointId}</addressId>
         <value>${order.total}</value>
-        <weight>${weight}</weight>
+        <weight>${order.weightInGrams / 1000}</weight>
         <eshop>https://biovoxel.tech/</eshop>
     </packetAttributes>
 </createPacket>`;

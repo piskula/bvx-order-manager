@@ -12,6 +12,7 @@ export interface OrderModel {
   date: Moment;
   currency: string;
   total: number;
+  weightInGrams: number;
   shipping: ShippingModel;
   paymentMethod: 'paypal' | 'bacs';
   invoiceRegular: InvoiceIdentifierModel;
