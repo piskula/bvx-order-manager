@@ -91,7 +91,7 @@
       <ng-container matColumnDef="country">
         <mat-header-cell *matHeaderCellDef class="small-column">Country</mat-header-cell>
         <mat-cell *matCellDef="let element" class="small-column">
-          <mat-chip-list class="ml-5">
+          <mat-chip-list class="ml-5" *ngIf="element?.shipping?.address?.country">
             <mat-chip
               [color]="['SK', 'CZ'].includes(element.shipping.address.country) ? 'accent' : 'warn'"
               selected>

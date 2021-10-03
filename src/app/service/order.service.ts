@@ -88,6 +88,10 @@ export class OrderService {
   }
 
   private getValueForKeyIfExists(shippingLine: any, key: string): string {
-    return ((shippingLine?.meta_data) as any[]).find(meta => meta?.key === key)?.value;
+    const metadata = shippingLine?.meta_data;
+    if (Object.prototype.toString.call(metadata) === '[object Array]') {
+      return (metadata as any[]).find(meta => meta?.key === key)?.value;
+    }
+    return '';
   }
 }
