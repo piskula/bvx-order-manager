@@ -99,6 +99,8 @@ export class PacketaService {
         return '111';
       case 'ES':
         return '4653';
+      case 'PT':
+        return '4655';
       case 'RO':
         return '4161';
       case 'US':
